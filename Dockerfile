@@ -1,6 +1,6 @@
 FROM golang:1.11.1 as builder
 WORKDIR /go/src/github.com/krezac/los-server/
-COPY ./* .
+COPY ./* ./
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
 
 FROM alpine:latest  

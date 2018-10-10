@@ -4,9 +4,10 @@ go:
   - 1.11.x
 
 before_install:
-  - echo "all packages should be vendored, no go get needed"
+  - go get -u github.com/onsi/ginkgo/ginkgo
 
 script:
+  - ginkgo -r
   - ./scripts/build/coverall.sh #go test -coverprofile=coverage.txt -covermode=atomic
 
 after_success:

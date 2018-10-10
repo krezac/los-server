@@ -1,4 +1,4 @@
-package main_test
+package database_test
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestLosServer(t *testing.T) {
+func TestDb(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "LosServer Suite")
+	RunSpecs(t, "Database Suite")
 }

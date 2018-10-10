@@ -7,7 +7,7 @@ before_install:
   - echo "all packages should be vendored, no go get needed"
 
 script:
-  - go test -coverprofile=coverage.txt -covermode=atomic
+  - ./scripts/build/coverall.sh #go test -coverprofile=coverage.txt -covermode=atomic
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

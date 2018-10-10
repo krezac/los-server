@@ -4,7 +4,7 @@ go:
   - 1.11.x
 
 before_install:
-  - go get -t -v ./...
+  - echo "all packages should be vendored, no go get needed"
 
 script:
   - go test -coverprofile=coverage.txt -covermode=atomic

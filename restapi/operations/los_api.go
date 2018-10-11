@@ -46,10 +46,10 @@ func NewLosAPI(spec *loads.Document) *LosAPI {
 		UserDeleteUserHandler: user.DeleteUserHandlerFunc(func(params user.DeleteUserParams) middleware.Responder {
 			return middleware.NotImplemented("operation UserDeleteUser has not yet been implemented")
 		}),
-		RangeOperationsGetRangeByIDHandler: range_operations.GetRangeByIDHandlerFunc(func(params range_operations.GetRangeByIDParams, principal interface{}) middleware.Responder {
+		RangeOperationsGetRangeByIDHandler: range_operations.GetRangeByIDHandlerFunc(func(params range_operations.GetRangeByIDParams) middleware.Responder {
 			return middleware.NotImplemented("operation RangeOperationsGetRangeByID has not yet been implemented")
 		}),
-		RangeOperationsGetRangesHandler: range_operations.GetRangesHandlerFunc(func(params range_operations.GetRangesParams, principal interface{}) middleware.Responder {
+		RangeOperationsGetRangesHandler: range_operations.GetRangesHandlerFunc(func(params range_operations.GetRangesParams) middleware.Responder {
 			return middleware.NotImplemented("operation RangeOperationsGetRanges has not yet been implemented")
 		}),
 		UserGetUserByNameHandler: user.GetUserByNameHandlerFunc(func(params user.GetUserByNameParams) middleware.Responder {
@@ -64,14 +64,6 @@ func NewLosAPI(spec *loads.Document) *LosAPI {
 		UserUpdateUserHandler: user.UpdateUserHandlerFunc(func(params user.UpdateUserParams) middleware.Responder {
 			return middleware.NotImplemented("operation UserUpdateUser has not yet been implemented")
 		}),
-
-		// Applies when the "api_key" header is set
-		APIKeyAuth: func(token string) (interface{}, error) {
-			return nil, errors.NotImplemented("api key auth (api_key) api_key from header param [api_key] has not yet been implemented")
-		},
-
-		// default authorizer is authorized meaning no requests are blocked
-		APIAuthorizer: security.Authorized(),
 	}
 }
 
@@ -102,13 +94,6 @@ type LosAPI struct {
 
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
-
-	// APIKeyAuth registers a function that takes a token and returns a principal
-	// it performs authentication based on an api key api_key provided in the header
-	APIKeyAuth func(string) (interface{}, error)
-
-	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
-	APIAuthorizer runtime.Authorizer
 
 	// UserCreateUserHandler sets the operation handler for the create user operation
 	UserCreateUserHandler user.CreateUserHandler
@@ -189,10 +174,6 @@ func (o *LosAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
-	if o.APIKeyAuth == nil {
-		unregistered = append(unregistered, "APIKeyAuth")
-	}
-
 	if o.UserCreateUserHandler == nil {
 		unregistered = append(unregistered, "user.CreateUserHandler")
 	}
@@ -240,24 +221,14 @@ func (o *LosAPI) ServeErrorFor(operationID string) func(http.ResponseWriter, *ht
 // AuthenticatorsFor gets the authenticators for the specified security schemes
 func (o *LosAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
 
-	result := make(map[string]runtime.Authenticator)
-	for name, scheme := range schemes {
-		switch name {
-
-		case "api_key":
-
-			result[name] = o.APIKeyAuthenticator(scheme.Name, scheme.In, o.APIKeyAuth)
-
-		}
-	}
-	return result
+	return nil
 
 }
 
 // Authorizer returns the registered authorizer
 func (o *LosAPI) Authorizer() runtime.Authorizer {
 
-	return o.APIAuthorizer
+	return nil
 
 }
 

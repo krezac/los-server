@@ -12,16 +12,16 @@ import (
 )
 
 // GetRangeByIDHandlerFunc turns a function with the right signature into a get range by Id handler
-type GetRangeByIDHandlerFunc func(GetRangeByIDParams, interface{}) middleware.Responder
+type GetRangeByIDHandlerFunc func(GetRangeByIDParams) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn GetRangeByIDHandlerFunc) Handle(params GetRangeByIDParams, principal interface{}) middleware.Responder {
-	return fn(params, principal)
+func (fn GetRangeByIDHandlerFunc) Handle(params GetRangeByIDParams) middleware.Responder {
+	return fn(params)
 }
 
 // GetRangeByIDHandler interface for that can handle valid get range by Id params
 type GetRangeByIDHandler interface {
-	Handle(GetRangeByIDParams, interface{}) middleware.Responder
+	Handle(GetRangeByIDParams) middleware.Responder
 }
 
 // NewGetRangeByID creates a new http.Handler for the get range by Id operation
@@ -48,25 +48,12 @@ func (o *GetRangeByID) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 	var Params = NewGetRangeByIDParams()
 
-	uprinc, aCtx, err := o.Context.Authorize(r, route)
-	if err != nil {
-		o.Context.Respond(rw, r, route.Produces, route, err)
-		return
-	}
-	if aCtx != nil {
-		r = aCtx
-	}
-	var principal interface{}
-	if uprinc != nil {
-		principal = uprinc
-	}
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle(Params, principal) // actually handle the request
+	res := o.Handler.Handle(Params) // actually handle the request
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 

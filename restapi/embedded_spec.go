@@ -19,8 +19,8 @@ var (
 func init() {
 	SwaggerJSON = json.RawMessage([]byte(`{
   "schemes": [
-    "https",
-    "http"
+    "http",
+    "https"
   ],
   "swagger": "2.0",
   "info": {
@@ -41,11 +41,6 @@ func init() {
   "paths": {
     "/range/{rangeId}": {
       "get": {
-        "security": [
-          {
-            "api_key": []
-          }
-        ],
         "description": "Returns a single shooting range",
         "produces": [
           "application/json"
@@ -76,18 +71,16 @@ func init() {
             "description": "Invalid ID supplied"
           },
           "404": {
-            "description": "Shooting range not found"
+            "description": "Shooting range not found",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
           }
         }
       }
     },
     "/ranges": {
       "get": {
-        "security": [
-          {
-            "api_key": []
-          }
-        ],
         "description": "Returns a list of shooting ranges",
         "produces": [
           "application/json"
@@ -101,7 +94,7 @@ func init() {
           {
             "type": "boolean",
             "default": true,
-            "description": "The user name for login",
+            "description": "Return active only ranges",
             "name": "activeOnly",
             "in": "query"
           }
@@ -363,9 +356,6 @@ func init() {
     },
     "Range": {
       "type": "object",
-      "required": [
-        "name"
-      ],
       "properties": {
         "active": {
           "description": "shooting range active",
@@ -563,8 +553,8 @@ func init() {
 }`))
 	FlatSwaggerJSON = json.RawMessage([]byte(`{
   "schemes": [
-    "https",
-    "http"
+    "http",
+    "https"
   ],
   "swagger": "2.0",
   "info": {
@@ -585,11 +575,6 @@ func init() {
   "paths": {
     "/range/{rangeId}": {
       "get": {
-        "security": [
-          {
-            "api_key": []
-          }
-        ],
         "description": "Returns a single shooting range",
         "produces": [
           "application/json"
@@ -620,18 +605,16 @@ func init() {
             "description": "Invalid ID supplied"
           },
           "404": {
-            "description": "Shooting range not found"
+            "description": "Shooting range not found",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
           }
         }
       }
     },
     "/ranges": {
       "get": {
-        "security": [
-          {
-            "api_key": []
-          }
-        ],
         "description": "Returns a list of shooting ranges",
         "produces": [
           "application/json"
@@ -645,7 +628,7 @@ func init() {
           {
             "type": "boolean",
             "default": true,
-            "description": "The user name for login",
+            "description": "Return active only ranges",
             "name": "activeOnly",
             "in": "query"
           }
@@ -907,9 +890,6 @@ func init() {
     },
     "Range": {
       "type": "object",
-      "required": [
-        "name"
-      ],
       "properties": {
         "active": {
           "description": "shooting range active",

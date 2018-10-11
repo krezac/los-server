@@ -52,10 +52,12 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 	api.JSONProducer = runtime.JSONProducer()
 
 	// Applies when the "api_key" header is set
+	/* TODO removed as not in use?
 	api.APIKeyAuth = func(token string) (interface{}, error) {
 		// TODO return nil, errors.NotImplemented("api key auth (api_key) api_key from header param [api_key] has not yet been implemented")
 		return "have it", nil
 	}
+	*/
 
 	// Set your custom authorizer if needed. Default one is security.Authorized()
 	// Expected interface runtime.Authorizer
@@ -68,10 +70,27 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 	api.UserDeleteUserHandler = user.DeleteUserHandlerFunc(func(params user.DeleteUserParams) middleware.Responder {
 		return middleware.NotImplemented("operation user.DeleteUser has not yet been implemented")
 	})
-	api.RangeOperationsGetRangeByIDHandler = range_operations.GetRangeByIDHandlerFunc(func(params range_operations.GetRangeByIDParams, principal interface{}) middleware.Responder {
-		return middleware.NotImplemented("operation range_operations.GetRangeByID has not yet been implemented")
+	api.RangeOperationsGetRangeByIDHandler = range_operations.GetRangeByIDHandlerFunc(func(params range_operations.GetRangeByIDParams) middleware.Responder {
+		dbr, err := db.GetRangeByID(params.RangeID)
+		if err != nil {
+			resp := models.APIResponse{
+				Message: err.Error(),
+			}
+			return range_operations.NewGetRangeByIDNotFound().WithPayload(&resp)
+		}
+
+		r := models.Range{
+			ID:        dbr.ID,
+			Name:      dbr.Name,
+			Latitude:  dbr.Latitude,
+			Longitude: dbr.Longitude,
+			Active:    dbr.Active,
+		}
+
+		return range_operations.NewGetRangeByIDOK().WithPayload(&r)
 	})
-	api.RangeOperationsGetRangesHandler = range_operations.GetRangesHandlerFunc(func(params range_operations.GetRangesParams, principal interface{}) middleware.Responder {
+
+	api.RangeOperationsGetRangesHandler = range_operations.GetRangesHandlerFunc(func(params range_operations.GetRangesParams) middleware.Responder {
 		// return middleware.NotImplemented("operation range_operations.GetRanges has not yet been implemented")
 		dbRanges, err := db.GetRanges()
 		if err != nil {
@@ -80,10 +99,9 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 
 		ranges := []*models.Range{}
 		for _, dbr := range dbRanges {
-			name := "" + dbr.Name // TODO why this is needed?
 			r := models.Range{
-				ID:        int64(dbr.ID),
-				Name:      &name,
+				ID:        dbr.ID,
+				Name:      dbr.Name,
 				Latitude:  dbr.Latitude,
 				Longitude: dbr.Longitude,
 				Active:    dbr.Active,

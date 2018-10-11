@@ -89,6 +89,11 @@ const GetRangeByIDNotFoundCode int = 404
 swagger:response getRangeByIdNotFound
 */
 type GetRangeByIDNotFound struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.APIResponse `json:"body,omitempty"`
 }
 
 // NewGetRangeByIDNotFound creates GetRangeByIDNotFound with default headers values
@@ -97,10 +102,25 @@ func NewGetRangeByIDNotFound() *GetRangeByIDNotFound {
 	return &GetRangeByIDNotFound{}
 }
 
+// WithPayload adds the payload to the get range by Id not found response
+func (o *GetRangeByIDNotFound) WithPayload(payload *models.APIResponse) *GetRangeByIDNotFound {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the get range by Id not found response
+func (o *GetRangeByIDNotFound) SetPayload(payload *models.APIResponse) {
+	o.Payload = payload
+}
+
 // WriteResponse to the client
 func (o *GetRangeByIDNotFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
-	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
-
 	rw.WriteHeader(404)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }

@@ -33,3 +33,12 @@ func (db *Database) GetRanges() ([]Range, error) {
 	err := db.db.Select(&ranges, "SELECT * FROM ranges ORDER BY name ASC")
 	return ranges, err
 }
+
+func (db *Database) GetRangeByID(id int64) (*Range, error) {
+	r := Range{}
+	err := db.db.Get(&r, "SELECT * FROM ranges WHERE id=?", id)
+	if err != nil {
+		return nil, err
+	}
+	return &r, nil
+}

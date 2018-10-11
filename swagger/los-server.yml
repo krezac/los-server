@@ -39,8 +39,8 @@ tags:
 - name: "user"
   description: "Operations about user"
 schemes:
-- "https"
 - "http"
+- "https"
 paths:
   /ranges:
     get:
@@ -54,7 +54,7 @@ paths:
       parameters:
       - name: "activeOnly"
         in: "query"
-        description: "The user name for login"
+        description: "Return active only ranges"
         required: false
         default: true
         type: "boolean"
@@ -65,8 +65,6 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Range"
-      security:
-      - api_key: []
   /range/{rangeId}:
     get:
       tags:
@@ -92,8 +90,8 @@ paths:
           description: "Invalid ID supplied"
         404:
           description: "Shooting range not found"
-      security:
-      - api_key: []
+          schema:
+            $ref: "#/definitions/ApiResponse"
   /user:
     post:
       tags:
@@ -277,8 +275,6 @@ definitions:
         type: "string"
   Range:
     type: "object"
-    required:
-    - "name"
     properties:
       id:
         type: "integer"

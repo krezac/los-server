@@ -40,7 +40,7 @@ type GetRangesParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*The user name for login
+	/*Return active only ranges
 	  In: query
 	  Default: true
 	*/

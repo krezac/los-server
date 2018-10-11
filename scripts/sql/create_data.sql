@@ -1,0 +1,7 @@
+USE los;
+
+DELETE FROM ranges;
+/*!40000 ALTER TABLE `ranges` DISABLE KEYS */;
+INSERT INTO ranges (ID, NAME, LATITUDE, LONGITUDE, ACTIVE) VALUES
+	(1, 'Čelákovice', 50.1488390, 14.7349610, 1),
+	(2, 'Žalany', 50.5967990, 13.8933250, 1);

@@ -2,6 +2,8 @@ package database
 
 import (
 	"database/sql"
+
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -12,8 +14,18 @@ type Database struct {
 
 func NewDatabase(db *sql.DB, driverName string) *Database {
 	database := Database{}
-	database.db = sqlx.NewDb(db, driverName) // sqlx.Connect("mysql", "root:root@/los")
+	database.db = sqlx.NewDb(db, driverName)
 	return &database
+}
+
+func NewMysqlDatabase() (*Database, error) {
+	database := Database{}
+	db, err := sql.Open("mysql", "los:los@/los")
+	if err != nil {
+		return nil, err
+	}
+	database.db = sqlx.NewDb(db, "mysql")
+	return &database, nil
 }
 
 func (db *Database) GetRanges() ([]Range, error) {

@@ -31,3 +31,18 @@ func TestGetRanges(t *testing.T) {
 	assert.Equal(t, 12, ranges[1].ID, "data check")
 	assert.Equal(t, 13, ranges[2].ID, "data check")
 }
+
+/*
+func TestGetRangesDb(t *testing.T) {
+
+	// note this test requires real database
+	db, err := database.NewMysqlDatabase()
+	assert.NotNil(t, db, "database wrapper created")
+	assert.NoError(t, err)
+
+	ranges, err := db.GetRanges()
+	assert.Len(t, ranges, 2, "list size")
+	assert.Equal(t, 1, ranges[0].ID, "data check")
+	assert.Equal(t, 2, ranges[1].ID, "data check")
+}
+*/

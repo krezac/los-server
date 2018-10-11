@@ -27,9 +27,9 @@ func TestGetRanges(t *testing.T) {
 
 	ranges, err := db.GetRanges()
 	assert.Len(t, ranges, 3, "list size")
-	assert.Equal(t, 11, ranges[0].ID, "data check")
-	assert.Equal(t, 12, ranges[1].ID, "data check")
-	assert.Equal(t, 13, ranges[2].ID, "data check")
+	assert.Equal(t, int64(11), ranges[0].ID, "data check")
+	assert.Equal(t, int64(12), ranges[1].ID, "data check")
+	assert.Equal(t, int64(13), ranges[2].ID, "data check")
 }
 
 /*

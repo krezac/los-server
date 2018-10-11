@@ -7,7 +7,7 @@ before_install:
   - go get -u github.com/onsi/ginkgo/ginkgo
 
 script:
-  - ginkgo -r
+  - go test $(go list ./... | egrep -v '/vendor/')
   - ./scripts/build/coverall.sh #go test -coverprofile=coverage.txt -covermode=atomic
 
 after_success:

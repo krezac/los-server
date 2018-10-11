@@ -23,6 +23,12 @@ type Range struct {
 	// id
 	ID int64 `json:"id,omitempty"`
 
+	// latitude
+	Latitude float32 `json:"latitude,omitempty"`
+
+	// longitude
+	Longitude float32 `json:"longitude,omitempty"`
+
 	// name
 	// Required: true
 	Name *string `json:"name"`

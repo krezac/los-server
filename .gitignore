@@ -14,3 +14,4 @@ los-server
 coverage.html
 coverage_total.txt
 .cover/
+.vscode/

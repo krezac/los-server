@@ -19,7 +19,8 @@ var (
 func init() {
 	SwaggerJSON = json.RawMessage([]byte(`{
   "schemes": [
-    "https"
+    "https",
+    "http"
   ],
   "swagger": "2.0",
   "info": {
@@ -35,7 +36,7 @@ func init() {
     },
     "version": "1.0.0"
   },
-  "host": "todo.los.server",
+  "host": "localhost:8080",
   "basePath": "/v1",
   "paths": {
     "/range/{rangeId}": {
@@ -373,6 +374,16 @@ func init() {
         "id": {
           "type": "integer",
           "format": "int64"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "float",
+          "example": "50.1488390"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "float",
+          "example": "14.7349610"
         },
         "name": {
           "type": "string",
@@ -552,7 +563,8 @@ func init() {
 }`))
 	FlatSwaggerJSON = json.RawMessage([]byte(`{
   "schemes": [
-    "https"
+    "https",
+    "http"
   ],
   "swagger": "2.0",
   "info": {
@@ -568,7 +580,7 @@ func init() {
     },
     "version": "1.0.0"
   },
-  "host": "todo.los.server",
+  "host": "localhost:8080",
   "basePath": "/v1",
   "paths": {
     "/range/{rangeId}": {
@@ -906,6 +918,16 @@ func init() {
         "id": {
           "type": "integer",
           "format": "int64"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "float",
+          "example": "50.1488390"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "float",
+          "example": "14.7349610"
         },
         "name": {
           "type": "string",

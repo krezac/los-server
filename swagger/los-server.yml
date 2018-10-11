@@ -9,7 +9,7 @@ info:
   license:
     name: "GNU General Public License v3.0"
     url: "https://www.gnu.org/licenses/gpl-3.0.html"
-host: "todo.los.server"
+host: "localhost:8080"
 basePath: "/v1"
 tags:
 - name: "range"
@@ -40,6 +40,7 @@ tags:
   description: "Operations about user"
 schemes:
 - "https"
+- "http"
 paths:
   /ranges:
     get:
@@ -285,6 +286,14 @@ definitions:
       name:
         type: "string"
         example: "SSK Celakovice"
+      latitude:
+        type: "number"
+        format: "float"
+        example: "50.1488390"
+      longitude:
+        type: "number"
+        format: "float"
+        example: "14.7349610"
       active:
         type: "boolean"
         description: "shooting range active"

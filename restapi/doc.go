@@ -10,8 +10,9 @@ http://todo/terms/
 
 
     Schemes:
+      http
       https
-    Host: todo.los.server
+    Host: localhost:8080
     BasePath: /v1
     Version: 1.0.0
     License: GNU General Public License v3.0 https://www.gnu.org/licenses/gpl-3.0.html

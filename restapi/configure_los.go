@@ -5,17 +5,26 @@ package restapi
 import (
 	"crypto/tls"
 	"net/http"
+	"strings"
+
+	"github.com/krezac/los-server/database"
 
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
+	"github.com/rakyll/statik/fs"
 
+	interpose "github.com/carbocation/interpose/middleware"
+	"github.com/krezac/los-server/models"
 	"github.com/krezac/los-server/restapi/operations"
 	"github.com/krezac/los-server/restapi/operations/range_operations"
 	"github.com/krezac/los-server/restapi/operations/user"
+	_ "github.com/krezac/los-server/swaggeruistatik" // this is to make sure the initializer gets called
 )
 
 //go:generate swagger generate server --target .. --name Los --spec ../swagger/los-server.yml
+
+var db *database.Database
 
 func configureFlags(api *operations.LosAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -31,13 +40,21 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 	// Example:
 	// api.Logger = log.Printf
 
+	// database access
+	var err error
+	db, err = database.NewMysqlDatabase()
+	if err != nil {
+		panic(err) // TODO do better handling
+	}
+
 	api.JSONConsumer = runtime.JSONConsumer()
 
 	api.JSONProducer = runtime.JSONProducer()
 
 	// Applies when the "api_key" header is set
 	api.APIKeyAuth = func(token string) (interface{}, error) {
-		return nil, errors.NotImplemented("api key auth (api_key) api_key from header param [api_key] has not yet been implemented")
+		// TODO return nil, errors.NotImplemented("api key auth (api_key) api_key from header param [api_key] has not yet been implemented")
+		return "have it", nil
 	}
 
 	// Set your custom authorizer if needed. Default one is security.Authorized()
@@ -55,7 +72,26 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 		return middleware.NotImplemented("operation range_operations.GetRangeByID has not yet been implemented")
 	})
 	api.RangeOperationsGetRangesHandler = range_operations.GetRangesHandlerFunc(func(params range_operations.GetRangesParams, principal interface{}) middleware.Responder {
-		return middleware.NotImplemented("operation range_operations.GetRanges has not yet been implemented")
+		// return middleware.NotImplemented("operation range_operations.GetRanges has not yet been implemented")
+		dbRanges, err := db.GetRanges()
+		if err != nil {
+			return range_operations.NewGetRangesOK()
+		}
+
+		ranges := []*models.Range{}
+		for _, dbr := range dbRanges {
+			name := "" + dbr.Name // TODO why this is needed?
+			r := models.Range{
+				ID:        int64(dbr.ID),
+				Name:      &name,
+				Latitude:  dbr.Latitude,
+				Longitude: dbr.Longitude,
+				Active:    dbr.Active,
+			}
+			ranges = append(ranges, &r)
+		}
+
+		return range_operations.NewGetRangesOK().WithPayload(ranges)
 	})
 	api.UserGetUserByNameHandler = user.GetUserByNameHandlerFunc(func(params user.GetUserByNameParams) middleware.Responder {
 		return middleware.NotImplemented("operation user.GetUserByName has not yet been implemented")
@@ -96,5 +132,30 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json document.
 // So this is a good place to plug in a panic handling middleware, logging and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
-	return handler
+
+	logViaLogrus := interpose.NegroniLogrus()
+	return logViaLogrus(uiMiddleware(handler))
+}
+
+// this is middleware to serve swagger-ui UI
+func uiMiddleware(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Shortcut helpers for swagger-ui
+		if r.URL.Path == "/swagger-ui" || r.URL.Path == "/swaggerui" || r.URL.Path == "/api/help" {
+			http.Redirect(w, r, "/swagger-ui/", http.StatusFound)
+			return
+		}
+		// Serving ./swagger-ui/
+		if strings.Index(r.URL.Path, "/swagger-ui/") == 0 {
+			statikFS, err := fs.New()
+			if err != nil {
+				panic(err)
+			}
+			staticServer := http.FileServer(statikFS)
+			http.StripPrefix("/swagger-ui/", staticServer).ServeHTTP(w, r)
+
+			return
+		}
+		handler.ServeHTTP(w, r)
+	})
 }

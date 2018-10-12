@@ -4,17 +4,15 @@ package restapi
 
 import (
 	"crypto/tls"
+	"log"
 	"net/http"
-	"strings"
 
 	"github.com/krezac/los-server/database"
 
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
-	"github.com/rakyll/statik/fs"
 
-	interpose "github.com/carbocation/interpose/middleware"
 	"github.com/krezac/los-server/models"
 	"github.com/krezac/los-server/restapi/operations"
 	"github.com/krezac/los-server/restapi/operations/range_operations"
@@ -22,7 +20,7 @@ import (
 	_ "github.com/krezac/los-server/swaggeruistatik" // this is to make sure the initializer gets called
 )
 
-//go:generate swagger generate server --target .. --name Los --spec ../swagger/los-server.yml
+//go:generate swagger generate server --target .. --name Los --spec ../swagger/los-server.yml --principal models.Principal
 
 var db *database.Database
 
@@ -38,7 +36,7 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 	// Expected interface func(string, ...interface{})
 	//
 	// Example:
-	// api.Logger = log.Printf
+	api.Logger = log.Printf // IMPL change against generated file
 
 	// database access
 	var err error
@@ -51,78 +49,38 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
-	// Applies when the "api_key" header is set
-	/* TODO removed as not in use?
-	api.APIKeyAuth = func(token string) (interface{}, error) {
-		// TODO return nil, errors.NotImplemented("api key auth (api_key) api_key from header param [api_key] has not yet been implemented")
-		return "have it", nil
+	api.LosAuthAuth = func(token string, scopes []string) (*models.Principal, error) {
+		return losAuthImpl(api, token, scopes) // IMPL change against generated file
 	}
-	*/
 
 	// Set your custom authorizer if needed. Default one is security.Authorized()
 	// Expected interface runtime.Authorizer
 	//
 	// Example:
 	// api.APIAuthorizer = security.Authorized()
-	api.UserCreateUserHandler = user.CreateUserHandlerFunc(func(params user.CreateUserParams) middleware.Responder {
+	api.UserCreateUserHandler = user.CreateUserHandlerFunc(func(params user.CreateUserParams, principal *models.Principal) middleware.Responder {
 		return middleware.NotImplemented("operation user.CreateUser has not yet been implemented")
 	})
-	api.UserDeleteUserHandler = user.DeleteUserHandlerFunc(func(params user.DeleteUserParams) middleware.Responder {
+	api.UserDeleteUserHandler = user.DeleteUserHandlerFunc(func(params user.DeleteUserParams, principal *models.Principal) middleware.Responder {
 		return middleware.NotImplemented("operation user.DeleteUser has not yet been implemented")
 	})
-	api.RangeOperationsGetRangeByIDHandler = range_operations.GetRangeByIDHandlerFunc(func(params range_operations.GetRangeByIDParams) middleware.Responder {
-		dbr, err := db.GetRangeByID(params.RangeID)
-		if err != nil {
-			resp := models.APIResponse{
-				Message: err.Error(),
-			}
-			return range_operations.NewGetRangeByIDNotFound().WithPayload(&resp)
-		}
-
-		r := models.Range{
-			ID:        dbr.ID,
-			Name:      dbr.Name,
-			Latitude:  dbr.Latitude,
-			Longitude: dbr.Longitude,
-			Active:    dbr.Active,
-		}
-
-		return range_operations.NewGetRangeByIDOK().WithPayload(&r)
+	api.RangeOperationsGetRangeByIDHandler = range_operations.GetRangeByIDHandlerFunc(func(params range_operations.GetRangeByIDParams, principal *models.Principal) middleware.Responder {
+		return getRangeByID(params, principal) // IMPL change against generated file
 	})
 
-	api.RangeOperationsGetRangesHandler = range_operations.GetRangesHandlerFunc(func(params range_operations.GetRangesParams) middleware.Responder {
-		dbRanges, err := db.GetRanges()
-		if err != nil {
-			resp := models.APIResponse{
-				Message: err.Error(),
-			}
-			return range_operations.NewGetRangesInternalServerError().WithPayload(&resp)
-		}
-
-		ranges := []*models.Range{}
-		for _, dbr := range dbRanges {
-			r := models.Range{
-				ID:        dbr.ID,
-				Name:      dbr.Name,
-				Latitude:  dbr.Latitude,
-				Longitude: dbr.Longitude,
-				Active:    dbr.Active,
-			}
-			ranges = append(ranges, &r)
-		}
-
-		return range_operations.NewGetRangesOK().WithPayload(ranges)
+	api.RangeOperationsGetRangesHandler = range_operations.GetRangesHandlerFunc(func(params range_operations.GetRangesParams, principal *models.Principal) middleware.Responder {
+		return getRanges(params, principal) // IMPL change against generated file
 	})
-	api.UserGetUserByNameHandler = user.GetUserByNameHandlerFunc(func(params user.GetUserByNameParams) middleware.Responder {
+	api.UserGetUserByNameHandler = user.GetUserByNameHandlerFunc(func(params user.GetUserByNameParams, principal *models.Principal) middleware.Responder {
 		return middleware.NotImplemented("operation user.GetUserByName has not yet been implemented")
 	})
-	api.UserLoginUserHandler = user.LoginUserHandlerFunc(func(params user.LoginUserParams) middleware.Responder {
+	api.UserLoginUserHandler = user.LoginUserHandlerFunc(func(params user.LoginUserParams, principal *models.Principal) middleware.Responder {
 		return middleware.NotImplemented("operation user.LoginUser has not yet been implemented")
 	})
-	api.UserLogoutUserHandler = user.LogoutUserHandlerFunc(func(params user.LogoutUserParams) middleware.Responder {
+	api.UserLogoutUserHandler = user.LogoutUserHandlerFunc(func(params user.LogoutUserParams, principal *models.Principal) middleware.Responder {
 		return middleware.NotImplemented("operation user.LogoutUser has not yet been implemented")
 	})
-	api.UserUpdateUserHandler = user.UpdateUserHandlerFunc(func(params user.UpdateUserParams) middleware.Responder {
+	api.UserUpdateUserHandler = user.UpdateUserHandlerFunc(func(params user.UpdateUserParams, principal *models.Principal) middleware.Responder {
 		return middleware.NotImplemented("operation user.UpdateUser has not yet been implemented")
 	})
 
@@ -153,29 +111,5 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // So this is a good place to plug in a panic handling middleware, logging and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
 
-	logViaLogrus := interpose.NegroniLogrus()
-	return logViaLogrus(uiMiddleware(handler))
-}
-
-// this is middleware to serve swagger-ui UI
-func uiMiddleware(handler http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Shortcut helpers for swagger-ui
-		if r.URL.Path == "/swagger-ui" || r.URL.Path == "/swaggerui" || r.URL.Path == "/api/help" {
-			http.Redirect(w, r, "/swagger-ui/", http.StatusFound)
-			return
-		}
-		// Serving ./swagger-ui/
-		if strings.Index(r.URL.Path, "/swagger-ui/") == 0 {
-			statikFS, err := fs.New()
-			if err != nil {
-				panic(err)
-			}
-			staticServer := http.FileServer(statikFS)
-			http.StripPrefix("/swagger-ui/", staticServer).ServeHTTP(w, r)
-
-			return
-		}
-		handler.ServeHTTP(w, r)
-	})
+	return logrusMiddleware(swaggerUiMiddleware(handler)) // IMPL change against generated file
 }

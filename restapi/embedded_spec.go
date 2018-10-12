@@ -19,7 +19,6 @@ var (
 func init() {
 	SwaggerJSON = json.RawMessage([]byte(`{
   "schemes": [
-    "http",
     "https"
   ],
   "swagger": "2.0",
@@ -484,24 +483,44 @@ func init() {
           "type": "string"
         }
       }
-    }
-  },
-  "securityDefinitions": {
-    "api_key": {
-      "type": "apiKey",
-      "name": "api_key",
-      "in": "header"
     },
-    "petstore_auth": {
-      "type": "oauth2",
-      "flow": "implicit",
-      "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
-      "scopes": {
-        "read:pets": "read your pets",
-        "write:pets": "modify pets in your account"
+    "principal": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     }
   },
+  "securityDefinitions": {
+    "los_auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://dummy.oauth.net/auth",
+      "tokenUrl": "https://dumy.oauth.net/token",
+      "scopes": {
+        "admin": "all other administrative tasks",
+        "competitor": "view personal details during competition",
+        "director": "manages the competition",
+        "judge": "enter new results, move people",
+        "registered": "view publically available info (i.e. dashboards)"
+      }
+    }
+  },
+  "security": [
+    {
+      "los_auth": [
+        "admin"
+      ]
+    }
+  ],
   "tags": [
     {
       "description": "Access to shooting ranges",
@@ -559,7 +578,6 @@ func init() {
 }`))
 	FlatSwaggerJSON = json.RawMessage([]byte(`{
   "schemes": [
-    "http",
     "https"
   ],
   "swagger": "2.0",
@@ -1024,24 +1042,44 @@ func init() {
           "type": "string"
         }
       }
-    }
-  },
-  "securityDefinitions": {
-    "api_key": {
-      "type": "apiKey",
-      "name": "api_key",
-      "in": "header"
     },
-    "petstore_auth": {
-      "type": "oauth2",
-      "flow": "implicit",
-      "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
-      "scopes": {
-        "read:pets": "read your pets",
-        "write:pets": "modify pets in your account"
+    "principal": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     }
   },
+  "securityDefinitions": {
+    "los_auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://dummy.oauth.net/auth",
+      "tokenUrl": "https://dumy.oauth.net/token",
+      "scopes": {
+        "admin": "all other administrative tasks",
+        "competitor": "view personal details during competition",
+        "director": "manages the competition",
+        "judge": "enter new results, move people",
+        "registered": "view publically available info (i.e. dashboards)"
+      }
+    }
+  },
+  "security": [
+    {
+      "los_auth": [
+        "admin"
+      ]
+    }
+  ],
   "tags": [
     {
       "description": "Access to shooting ranges",

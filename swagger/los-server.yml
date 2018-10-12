@@ -39,7 +39,6 @@ tags:
 - name: "user"
   description: "Operations about user"
 schemes:
-- "http"
 - "https"
 paths:
   /ranges:
@@ -233,18 +232,30 @@ paths:
         404:
           description: "User not found"
 securityDefinitions:
-  petstore_auth:
-    type: "oauth2"
-    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
-    flow: "implicit"
+  los_auth: # based on description https://github.com/go-swagger/go-swagger/tree/master/examples/composed-auth
+    type: oauth2
+    # The flow and URLs in spec are for documentary purpose: go-swagger does not implement OAuth workflows
+    authorizationUrl: 'https://dummy.oauth.net/auth'
+    tokenUrl: 'https://dumy.oauth.net/token'
+    flow: accessCode
     scopes:
-      write:pets: "modify pets in your account"
-      read:pets: "read your pets"
-  api_key:
-    type: "apiKey"
-    name: "api_key"
-    in: "header"
+      registered: view publically available info (i.e. dashboards)
+      competitor: view personal details during competition
+      judge: enter new results, move people
+      director: manages the competition
+      admin: all other administrative tasks
+security:
+  - los_auth: ["admin"]
 definitions:
+  principal:
+    type: object 
+    properties: 
+      name: 
+        type: string
+      roles:
+        type: array 
+        items: 
+          type: string
   User:
     type: "object"
     properties:

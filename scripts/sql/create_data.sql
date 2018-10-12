@@ -25,4 +25,4 @@ INSERT INTO competitions (ID, NAME, EVENT_DATE, RANGE_ID, TYPE_ID) VALUES
 	(1, '10 ran a dost 27', '2018-10-27', 1, 2);
 
 INSERT INTO users (ID, LOGIN, PASSWORD) VALUES
-	(1, 'user1', 'pass1');
+	(1, 'user1@dev.los', 'pass1');

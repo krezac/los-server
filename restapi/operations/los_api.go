@@ -21,6 +21,8 @@ import (
 
 	"github.com/krezac/los-server/restapi/operations/range_operations"
 	"github.com/krezac/los-server/restapi/operations/user"
+
+	models "github.com/krezac/los-server/models"
 )
 
 // NewLosAPI creates a new Los instance
@@ -40,30 +42,37 @@ func NewLosAPI(spec *loads.Document) *LosAPI {
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
-		UserCreateUserHandler: user.CreateUserHandlerFunc(func(params user.CreateUserParams) middleware.Responder {
+		UserCreateUserHandler: user.CreateUserHandlerFunc(func(params user.CreateUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation UserCreateUser has not yet been implemented")
 		}),
-		UserDeleteUserHandler: user.DeleteUserHandlerFunc(func(params user.DeleteUserParams) middleware.Responder {
+		UserDeleteUserHandler: user.DeleteUserHandlerFunc(func(params user.DeleteUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation UserDeleteUser has not yet been implemented")
 		}),
-		RangeOperationsGetRangeByIDHandler: range_operations.GetRangeByIDHandlerFunc(func(params range_operations.GetRangeByIDParams) middleware.Responder {
+		RangeOperationsGetRangeByIDHandler: range_operations.GetRangeByIDHandlerFunc(func(params range_operations.GetRangeByIDParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation RangeOperationsGetRangeByID has not yet been implemented")
 		}),
-		RangeOperationsGetRangesHandler: range_operations.GetRangesHandlerFunc(func(params range_operations.GetRangesParams) middleware.Responder {
+		RangeOperationsGetRangesHandler: range_operations.GetRangesHandlerFunc(func(params range_operations.GetRangesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation RangeOperationsGetRanges has not yet been implemented")
 		}),
-		UserGetUserByNameHandler: user.GetUserByNameHandlerFunc(func(params user.GetUserByNameParams) middleware.Responder {
+		UserGetUserByNameHandler: user.GetUserByNameHandlerFunc(func(params user.GetUserByNameParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation UserGetUserByName has not yet been implemented")
 		}),
-		UserLoginUserHandler: user.LoginUserHandlerFunc(func(params user.LoginUserParams) middleware.Responder {
+		UserLoginUserHandler: user.LoginUserHandlerFunc(func(params user.LoginUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation UserLoginUser has not yet been implemented")
 		}),
-		UserLogoutUserHandler: user.LogoutUserHandlerFunc(func(params user.LogoutUserParams) middleware.Responder {
+		UserLogoutUserHandler: user.LogoutUserHandlerFunc(func(params user.LogoutUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation UserLogoutUser has not yet been implemented")
 		}),
-		UserUpdateUserHandler: user.UpdateUserHandlerFunc(func(params user.UpdateUserParams) middleware.Responder {
+		UserUpdateUserHandler: user.UpdateUserHandlerFunc(func(params user.UpdateUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation UserUpdateUser has not yet been implemented")
 		}),
+
+		LosAuthAuth: func(token string, scopes []string) (*models.Principal, error) {
+			return nil, errors.NotImplemented("oauth2 bearer auth (los_auth) has not yet been implemented")
+		},
+
+		// default authorizer is authorized meaning no requests are blocked
+		APIAuthorizer: security.Authorized(),
 	}
 }
 
@@ -94,6 +103,13 @@ type LosAPI struct {
 
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
+
+	// LosAuthAuth registers a function that takes an access token and a collection of required scopes and returns a principal
+	// it performs authentication based on an oauth2 bearer token provided in the request
+	LosAuthAuth func(string, []string) (*models.Principal, error)
+
+	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
+	APIAuthorizer runtime.Authorizer
 
 	// UserCreateUserHandler sets the operation handler for the create user operation
 	UserCreateUserHandler user.CreateUserHandler
@@ -174,6 +190,10 @@ func (o *LosAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.LosAuthAuth == nil {
+		unregistered = append(unregistered, "LosAuthAuth")
+	}
+
 	if o.UserCreateUserHandler == nil {
 		unregistered = append(unregistered, "user.CreateUserHandler")
 	}
@@ -221,14 +241,26 @@ func (o *LosAPI) ServeErrorFor(operationID string) func(http.ResponseWriter, *ht
 // AuthenticatorsFor gets the authenticators for the specified security schemes
 func (o *LosAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
 
-	return nil
+	result := make(map[string]runtime.Authenticator)
+	for name, scheme := range schemes {
+		switch name {
+
+		case "los_auth":
+
+			result[name] = o.BearerAuthenticator(scheme.Name, func(token string, scopes []string) (interface{}, error) {
+				return o.LosAuthAuth(token, scopes)
+			})
+
+		}
+	}
+	return result
 
 }
 
 // Authorizer returns the registered authorizer
 func (o *LosAPI) Authorizer() runtime.Authorizer {
 
-	return nil
+	return o.APIAuthorizer
 
 }
 

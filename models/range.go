@@ -22,10 +22,10 @@ type Range struct {
 	ID int64 `json:"id,omitempty"`
 
 	// latitude
-	Latitude float32 `json:"latitude,omitempty"`
+	Latitude float64 `json:"latitude,omitempty"`
 
 	// longitude
-	Longitude float32 `json:"longitude,omitempty"`
+	Longitude float64 `json:"longitude,omitempty"`
 
 	// name
 	Name string `json:"name,omitempty"`

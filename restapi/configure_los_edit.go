@@ -91,10 +91,12 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 	})
 
 	api.RangeOperationsGetRangesHandler = range_operations.GetRangesHandlerFunc(func(params range_operations.GetRangesParams) middleware.Responder {
-		// return middleware.NotImplemented("operation range_operations.GetRanges has not yet been implemented")
 		dbRanges, err := db.GetRanges()
 		if err != nil {
-			return range_operations.NewGetRangesOK()
+			resp := models.APIResponse{
+				Message: err.Error(),
+			}
+			return range_operations.NewGetRangesInternalServerError().WithPayload(&resp)
 		}
 
 		ranges := []*models.Range{}

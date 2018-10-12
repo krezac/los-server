@@ -65,6 +65,10 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Range"
+        500:
+          description: "Retrieving list of ranges failed"
+          schema:
+            $ref: "#/definitions/ApiResponse"
   /range/{rangeId}:
     get:
       tags:
@@ -284,11 +288,11 @@ definitions:
         example: "SSK Celakovice"
       latitude:
         type: "number"
-        format: "float"
+        format: "double"
         example: "50.1488390"
       longitude:
         type: "number"
-        format: "float"
+        format: "double"
         example: "14.7349610"
       active:
         type: "boolean"

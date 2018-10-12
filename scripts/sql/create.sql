@@ -12,49 +12,49 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
 
--- Dumping database structure for los
-DROP DATABASE IF EXISTS `los`;
-CREATE DATABASE IF NOT EXISTS `los` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `los`;
+-- ******** DONE ******** -- Dumping database structure for los
+-- ******** DONE ********  DROP DATABASE IF EXISTS `los`;
+-- ******** DONE ******** CREATE DATABASE IF NOT EXISTS `los` /*!40100 DEFAULT CHARACTER SET utf8 */;
+-- ******** DONE ******** USE `los`;
 
 -- Dumping structure for table los.competitions
-DROP TABLE IF EXISTS `competitions`;
-CREATE TABLE IF NOT EXISTS `competitions` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `NAME` tinytext NOT NULL,
-  `DATE` date NOT NULL,
-  `RANGE_ID` int(11) NOT NULL,
-  `TYPE_ID` int(11) NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `FK_COMPETITIONS_ranges` (`RANGE_ID`),
-  KEY `FK_competitions_competition_types` (`TYPE_ID`),
-  CONSTRAINT `FK_COMPETITIONS_ranges` FOREIGN KEY (`RANGE_ID`) REFERENCES `ranges` (`ID`),
-  CONSTRAINT `FK_competitions_competition_types` FOREIGN KEY (`TYPE_ID`) REFERENCES `competition_types` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- ******** DONE ******** DROP TABLE IF EXISTS `competitions`;
+-- ******** DONE ******** CREATE TABLE IF NOT EXISTS `competitions` (
+-- ******** DONE ********   `ID` int(11) NOT NULL AUTO_INCREMENT,
+-- ******** DONE ********   `NAME` tinytext NOT NULL,
+-- ******** DONE ********   `DATE` date NOT NULL,
+-- ******** DONE ********   `RANGE_ID` int(11) NOT NULL,
+-- ******** DONE ********   `TYPE_ID` int(11) NOT NULL,
+-- ******** DONE ********   PRIMARY KEY (`ID`),
+-- ******** DONE ********   KEY `FK_COMPETITIONS_ranges` (`RANGE_ID`),
+-- ******** DONE ********   KEY `FK_competitions_competition_types` (`TYPE_ID`),
+-- ******** DONE ********   CONSTRAINT `FK_COMPETITIONS_ranges` FOREIGN KEY (`RANGE_ID`) REFERENCES `ranges` (`ID`),
+-- ******** DONE ********   CONSTRAINT `FK_competitions_competition_types` FOREIGN KEY (`TYPE_ID`) REFERENCES `competition_types` (`ID`)
+-- ******** DONE ******** ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table los.competitions: ~0 rows (approximately)
-DELETE FROM `competitions`;
-/*!40000 ALTER TABLE `competitions` DISABLE KEYS */;
-/*!40000 ALTER TABLE `competitions` ENABLE KEYS */;
+-- ******** DONE ******** -- Dumping data for table los.competitions: ~0 rows (approximately)
+-- ******** DONE ******** DELETE FROM `competitions`;
+-- ******** DONE ******** /*!40000 ALTER TABLE `competitions` DISABLE KEYS */;
+-- ******** DONE ******** /*!40000 ALTER TABLE `competitions` ENABLE KEYS */;
 
--- Dumping structure for table los.competition_types
-DROP TABLE IF EXISTS `competition_types`;
-CREATE TABLE IF NOT EXISTS `competition_types` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `CODE` varchar(10) NOT NULL,
-  `NAME` tinytext NOT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `UQ_COMPETITION_TYPE_CODE` (`CODE`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+-- ******** DONE ******** -- Dumping structure for table los.competition_types
+-- ******** DONE ******** DROP TABLE IF EXISTS `competition_types`;
+-- ******** DONE ******** CREATE TABLE IF NOT EXISTS `competition_types` (
+-- ******** DONE ********   `ID` int(11) NOT NULL AUTO_INCREMENT,
+-- ******** DONE ********   `CODE` varchar(10) NOT NULL,
+-- ******** DONE ********   `NAME` tinytext NOT NULL,
+-- ******** DONE ********   PRIMARY KEY (`ID`),
+-- ******** DONE ********   UNIQUE KEY `UQ_COMPETITION_TYPE_CODE` (`CODE`)
+-- ******** DONE ******** ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- Dumping data for table los.competition_types: ~3 rows (approximately)
-DELETE FROM `competition_types`;
-/*!40000 ALTER TABLE `competition_types` DISABLE KEYS */;
-INSERT INTO `competition_types` (`ID`, `CODE`, `NAME`) VALUES
-	(1, 'K', 'Klubová'),
-	(2, 'P', 'Pohárová'),
-	(3, 'M', 'Mistrovství ČR');
-/*!40000 ALTER TABLE `competition_types` ENABLE KEYS */;
+-- ******** DONE ******** DELETE FROM `competition_types`;
+-- ******** DONE ******** /*!40000 ALTER TABLE `competition_types` DISABLE KEYS */;
+-- ******** DONE ******** INSERT INTO `competition_types` (`ID`, `CODE`, `NAME`) VALUES
+-- ******** DONE ******** 	(1, 'K', 'Klubová'),
+-- ******** DONE ******** 	(2, 'P', 'Pohárová'),
+-- ******** DONE ******** 	(3, 'M', 'Mistrovství ČR');
+-- ******** DONE ******** /*!40000 ALTER TABLE `competition_types` ENABLE KEYS */;
 
 -- Dumping structure for table los.competitors
 DROP TABLE IF EXISTS `competitors`;
@@ -114,24 +114,24 @@ DELETE FROM `participants`;
 /*!40000 ALTER TABLE `participants` DISABLE KEYS */;
 /*!40000 ALTER TABLE `participants` ENABLE KEYS */;
 
--- Dumping structure for table los.ranges
-DROP TABLE IF EXISTS `ranges`;
-CREATE TABLE IF NOT EXISTS `ranges` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `NAME` tinytext NOT NULL,
-  `LATITUDE` decimal(10,7) NOT NULL,
-  `LONGITUDE` decimal(10,7) NOT NULL,
-  `ACTIVE` tinyint(1) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+-- ******** DONE ******** -- Dumping structure for table los.ranges
+-- ******** DONE ******** DROP TABLE IF EXISTS `ranges`;
+-- ******** DONE ******** CREATE TABLE IF NOT EXISTS `ranges` (
+-- ******** DONE ******** `ID` int(11) NOT NULL AUTO_INCREMENT,
+-- ******** DONE ******** `NAME` tinytext NOT NULL,
+-- ******** DONE ******** `LATITUDE` decimal(10,7) NOT NULL,
+-- ******** DONE ******** `LONGITUDE` decimal(10,7) NOT NULL,
+-- ******** DONE ******** `ACTIVE` tinyint(1) NOT NULL DEFAULT 1,
+-- ******** DONE ******** PRIMARY KEY (`ID`)
+-- ******** DONE ******** ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
--- Dumping data for table los.ranges: ~2 rows (approximately)
-DELETE FROM `ranges`;
-/*!40000 ALTER TABLE `ranges` DISABLE KEYS */;
-INSERT INTO `ranges` (`ID`, `NAME`, `LATITUDE`, `LONGITUDE`, `ACTIVE`) VALUES
-	(1, 'Čelákovice', 50.1488390, 14.7349610, 1),
-	(2, 'Žalany', 50.5967990, 13.8933250, 1);
-/*!40000 ALTER TABLE `ranges` ENABLE KEYS */;
+-- ******** DONE ******** -- Dumping data for table los.ranges: ~2 rows (approximately)
+-- ******** DONE ******** DELETE FROM `ranges`;
+-- ******** DONE ******** /*!40000 ALTER TABLE `ranges` DISABLE KEYS */;
+-- ******** DONE ******** INSERT INTO `ranges` (`ID`, `NAME`, `LATITUDE`, `LONGITUDE`, `ACTIVE`) VALUES
+-- ******** DONE ********	(1, 'Čelákovice', 50.1488390, 14.7349610, 1),
+-- ******** DONE ********	(2, 'Žalany', 50.5967990, 13.8933250, 1);
+-- ******** DONE ******** /*!40000 ALTER TABLE `ranges` ENABLE KEYS */;
 
 -- Dumping structure for table los.squads
 DROP TABLE IF EXISTS `squads`;

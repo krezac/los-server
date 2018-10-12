@@ -59,3 +59,47 @@ func (o *GetRangesOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pro
 	}
 
 }
+
+// GetRangesInternalServerErrorCode is the HTTP code returned for type GetRangesInternalServerError
+const GetRangesInternalServerErrorCode int = 500
+
+/*GetRangesInternalServerError Retrieving list of ranges failed
+
+swagger:response getRangesInternalServerError
+*/
+type GetRangesInternalServerError struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.APIResponse `json:"body,omitempty"`
+}
+
+// NewGetRangesInternalServerError creates GetRangesInternalServerError with default headers values
+func NewGetRangesInternalServerError() *GetRangesInternalServerError {
+
+	return &GetRangesInternalServerError{}
+}
+
+// WithPayload adds the payload to the get ranges internal server error response
+func (o *GetRangesInternalServerError) WithPayload(payload *models.APIResponse) *GetRangesInternalServerError {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the get ranges internal server error response
+func (o *GetRangesInternalServerError) SetPayload(payload *models.APIResponse) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *GetRangesInternalServerError) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(500)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
+}

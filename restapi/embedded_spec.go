@@ -108,6 +108,12 @@ func init() {
                 "$ref": "#/definitions/Range"
               }
             }
+          },
+          "500": {
+            "description": "Retrieving list of ranges failed",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
           }
         }
       }
@@ -367,12 +373,12 @@ func init() {
         },
         "latitude": {
           "type": "number",
-          "format": "float",
+          "format": "double",
           "example": "50.1488390"
         },
         "longitude": {
           "type": "number",
-          "format": "float",
+          "format": "double",
           "example": "14.7349610"
         },
         "name": {
@@ -642,6 +648,12 @@ func init() {
                 "$ref": "#/definitions/Range"
               }
             }
+          },
+          "500": {
+            "description": "Retrieving list of ranges failed",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
           }
         }
       }
@@ -901,12 +913,12 @@ func init() {
         },
         "latitude": {
           "type": "number",
-          "format": "float",
+          "format": "double",
           "example": "50.1488390"
         },
         "longitude": {
           "type": "number",
-          "format": "float",
+          "format": "double",
           "example": "14.7349610"
         },
         "name": {

@@ -20,7 +20,7 @@ func NewDatabase(db *sql.DB, driverName string) *Database {
 
 func NewMysqlDatabase() (*Database, error) {
 	database := Database{}
-	db, err := sql.Open("mysql", "los:los@/los")
+	db, err := sql.Open("mysql", "los:los@/los?parseTime=true")
 	if err != nil {
 		return nil, err
 	}

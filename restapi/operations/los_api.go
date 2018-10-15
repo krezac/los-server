@@ -7,6 +7,7 @@ package operations
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -42,6 +43,9 @@ func NewLosAPI(spec *loads.Document) *LosAPI {
 		BearerAuthenticator: security.BearerAuth,
 		JSONConsumer:        runtime.JSONConsumer(),
 		JSONProducer:        runtime.JSONProducer(),
+		HTMLProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
+			return errors.NotImplemented("html producer has not yet been implemented")
+		}),
 		UserCreateUserHandler: user.CreateUserHandlerFunc(func(params user.CreateUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation UserCreateUser has not yet been implemented")
 		}),
@@ -53,6 +57,9 @@ func NewLosAPI(spec *loads.Document) *LosAPI {
 		}),
 		RangeOperationsGetRangesHandler: range_operations.GetRangesHandlerFunc(func(params range_operations.GetRangesParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation RangeOperationsGetRanges has not yet been implemented")
+		}),
+		RangeOperationsGetRangesHTMLHandler: range_operations.GetRangesHTMLHandlerFunc(func(params range_operations.GetRangesHTMLParams) middleware.Responder {
+			return middleware.NotImplemented("operation RangeOperationsGetRangesHTML has not yet been implemented")
 		}),
 		UserGetUserByNameHandler: user.GetUserByNameHandlerFunc(func(params user.GetUserByNameParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation UserGetUserByName has not yet been implemented")
@@ -103,6 +110,8 @@ type LosAPI struct {
 
 	// JSONProducer registers a producer for a "application/json" mime type
 	JSONProducer runtime.Producer
+	// HTMLProducer registers a producer for a "text/html" mime type
+	HTMLProducer runtime.Producer
 
 	// LosAuthAuth registers a function that takes an access token and a collection of required scopes and returns a principal
 	// it performs authentication based on an oauth2 bearer token provided in the request
@@ -119,6 +128,8 @@ type LosAPI struct {
 	RangeOperationsGetRangeByIDHandler range_operations.GetRangeByIDHandler
 	// RangeOperationsGetRangesHandler sets the operation handler for the get ranges operation
 	RangeOperationsGetRangesHandler range_operations.GetRangesHandler
+	// RangeOperationsGetRangesHTMLHandler sets the operation handler for the get ranges Html operation
+	RangeOperationsGetRangesHTMLHandler range_operations.GetRangesHTMLHandler
 	// UserGetUserByNameHandler sets the operation handler for the get user by name operation
 	UserGetUserByNameHandler user.GetUserByNameHandler
 	// UserLoginUserHandler sets the operation handler for the login user operation
@@ -190,6 +201,10 @@ func (o *LosAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.HTMLProducer == nil {
+		unregistered = append(unregistered, "HTMLProducer")
+	}
+
 	if o.LosAuthAuth == nil {
 		unregistered = append(unregistered, "LosAuthAuth")
 	}
@@ -208,6 +223,10 @@ func (o *LosAPI) Validate() error {
 
 	if o.RangeOperationsGetRangesHandler == nil {
 		unregistered = append(unregistered, "range_operations.GetRangesHandler")
+	}
+
+	if o.RangeOperationsGetRangesHTMLHandler == nil {
+		unregistered = append(unregistered, "range_operations.GetRangesHTMLHandler")
 	}
 
 	if o.UserGetUserByNameHandler == nil {
@@ -294,6 +313,9 @@ func (o *LosAPI) ProducersFor(mediaTypes []string) map[string]runtime.Producer {
 		case "application/json":
 			result["application/json"] = o.JSONProducer
 
+		case "text/html":
+			result["text/html"] = o.HTMLProducer
+
 		}
 
 		if p, ok := o.customProducers[mt]; ok {
@@ -355,6 +377,11 @@ func (o *LosAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/ranges"] = range_operations.NewGetRanges(o.context, o.RangeOperationsGetRangesHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/ranges/html"] = range_operations.NewGetRangesHTML(o.context, o.RangeOperationsGetRangesHTMLHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

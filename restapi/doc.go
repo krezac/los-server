@@ -22,6 +22,7 @@ http://todo/terms/
 
     Produces:
     - application/json
+    - text/html
 
 swagger:meta
 */

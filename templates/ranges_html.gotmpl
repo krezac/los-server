@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="/static/css/table.css">
+</head>
+<body>
+
+<h1>Ranges</h1>
+
+<div class="divTable blueTable">
+<div class="divTableHeading">
+<div class="divTableRow">
+<div class="divTableHead">Name</div>
+<div class="divTableHead">Latitude</div>
+<div class="divTableHead">Longitude</div>
+<div class="divTableHead">Map</div>
+<div class="divTableHead">Competitions</div>
+</div>
+</div>
+<div class="divTableBody">
+{{ range . }}
+<div class="divTableRow">
+    <div class="divTableCell">{{ .Name }}</div>
+    <div class="divTableCell">{{ .Latitude }}</div>
+    <div class="divTableCell">{{ .Longitude }}</div>
+    <div class="divTableCell"><a href="https://www.google.com/maps/search/?api=1&query={{ .Latitude }},{{ .Longitude }}" target="_blank">Map</a></div>
+    <div class="divTableCell"><a href="{{ .ID }}/competitions/html">Competitions</a></div>
+</div>
+{{ end }}
+</div>
+</div>
+
+</body>
+</html>
+

@@ -68,6 +68,32 @@ paths:
           description: "Retrieving list of ranges failed"
           schema:
             $ref: "#/definitions/ApiResponse"
+  /ranges/html:
+    get:
+      tags:
+      - "range"
+      summary: "List shooting ranges in the system as HTML page"
+      description: "Returns a list of shooting ranges as HTML page"
+      operationId: "getRangesHtml"
+      produces:
+      - "text/html"
+      parameters:
+      - name: "activeOnly"
+        in: "query"
+        description: "Return active only ranges"
+        required: false
+        default: true
+        type: "boolean"
+      security: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/HtmlResponse"
+        500:
+          description: "Retrieving list of ranges failed"
+          schema:
+            type: "string"
   /range/{rangeId}:
     get:
       tags:
@@ -288,6 +314,13 @@ definitions:
         type: "string"
       message:
         type: "string"
+  HtmlResponse:
+    type: "object"
+    properties:
+      template:
+        type: "string"
+      payload:
+        type: "object"
   Range:
     type: "object"
     properties:

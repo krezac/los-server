@@ -27,7 +27,7 @@ func losAuthImpl(api *operations.LosAPI, token string, scopes []string) (*models
 	*/
 }
 
-func getRangeByID(params range_operations.GetRangeByIDParams, principal *models.Principal) middleware.Responder {
+func getRangeByID(api *operations.LosAPI, params range_operations.GetRangeByIDParams, principal *models.Principal) middleware.Responder {
 	dbr, err := db.GetRangeByID(params.RangeID)
 	if err != nil {
 		resp := models.APIResponse{
@@ -47,7 +47,7 @@ func getRangeByID(params range_operations.GetRangeByIDParams, principal *models.
 	return range_operations.NewGetRangeByIDOK().WithPayload(&r)
 }
 
-func getRanges(params range_operations.GetRangesParams, principal *models.Principal) middleware.Responder {
+func getRanges(api *operations.LosAPI, params range_operations.GetRangesParams, principal *models.Principal) middleware.Responder {
 	dbRanges, err := db.GetRanges()
 	if err != nil {
 		resp := models.APIResponse{
@@ -71,6 +71,37 @@ func getRanges(params range_operations.GetRangesParams, principal *models.Princi
 	return range_operations.NewGetRangesOK().WithPayload(ranges)
 }
 
+func getRangesHTML(api *operations.LosAPI, params range_operations.GetRangesHTMLParams) middleware.Responder {
+	dbRanges, err := db.GetRanges()
+	if err != nil {
+		resp := models.APIResponse{
+			Message: err.Error(),
+		}
+		return range_operations.NewGetRangesInternalServerError().WithPayload(&resp)
+	}
+
+	ranges := []*models.Range{}
+	for _, dbr := range dbRanges {
+		r := models.Range{
+			ID:        dbr.ID,
+			Name:      dbr.Name,
+			Latitude:  dbr.Latitude,
+			Longitude: dbr.Longitude,
+			Active:    dbr.Active,
+		}
+		ranges = append(ranges, &r)
+	}
+
+	//t := template.New("range list HTML")                    // Create a template.
+	//t, _ = t.ParseFiles() // Parse template file.
+	//t.Execute(, user)                                      // merge.
+	htmlRes := models.HTMLResponse{
+		Template: "templates/ranges_html.gotmpl",
+		Payload:  ranges,
+	}
+	return range_operations.NewGetRangesHTMLOK().WithPayload(&htmlRes)
+}
+
 // this is middleware to serve swagger-ui UI
 func swaggerUiMiddleware(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -88,6 +119,10 @@ func swaggerUiMiddleware(handler http.Handler) http.Handler {
 			staticServer := http.FileServer(statikFS)
 			http.StripPrefix("/swagger-ui/", staticServer).ServeHTTP(w, r)
 
+			return
+		} else if strings.Index(r.URL.Path, "/static/") == 0 {
+			fs := http.FileServer(http.Dir("static"))
+			http.StripPrefix("/static/", fs).ServeHTTP(w, r)
 			return
 		}
 		handler.ServeHTTP(w, r)

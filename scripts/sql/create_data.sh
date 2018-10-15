@@ -1,2 +1,2 @@
 #!/bin/sh
-mysql -u los -p < scripts/sql/create_data.sql
+mysql --user=los --password=los los < scripts/sql/create_data.sql

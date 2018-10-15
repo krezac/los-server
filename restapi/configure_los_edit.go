@@ -4,6 +4,8 @@ package restapi
 
 import (
 	"crypto/tls"
+	"html/template"
+	"io"
 	"log"
 	"net/http"
 
@@ -49,6 +51,15 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 
 	api.JSONProducer = runtime.JSONProducer()
 
+	api.HTMLProducer = runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
+		htmlRes := data.(*models.HTMLResponse)
+		tmpl, err := template.ParseFiles(htmlRes.Template)
+		if err != nil {
+			return err
+		}
+		return tmpl.Execute(w, htmlRes.Payload)
+	})
+
 	api.LosAuthAuth = func(token string, scopes []string) (*models.Principal, error) {
 		return losAuthImpl(api, token, scopes) // IMPL change against generated file
 	}
@@ -65,11 +76,14 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 		return middleware.NotImplemented("operation user.DeleteUser has not yet been implemented")
 	})
 	api.RangeOperationsGetRangeByIDHandler = range_operations.GetRangeByIDHandlerFunc(func(params range_operations.GetRangeByIDParams, principal *models.Principal) middleware.Responder {
-		return getRangeByID(params, principal) // IMPL change against generated file
+		return getRangeByID(api, params, principal) // IMPL change against generated file
 	})
 
 	api.RangeOperationsGetRangesHandler = range_operations.GetRangesHandlerFunc(func(params range_operations.GetRangesParams, principal *models.Principal) middleware.Responder {
-		return getRanges(params, principal) // IMPL change against generated file
+		return getRanges(api, params, principal) // IMPL change against generated file
+	})
+	api.RangeOperationsGetRangesHTMLHandler = range_operations.GetRangesHTMLHandlerFunc(func(params range_operations.GetRangesHTMLParams) middleware.Responder {
+		return getRangesHTML(api, params) // IMPL change against generated file
 	})
 	api.UserGetUserByNameHandler = user.GetUserByNameHandlerFunc(func(params user.GetUserByNameParams, principal *models.Principal) middleware.Responder {
 		return middleware.NotImplemented("operation user.GetUserByName has not yet been implemented")

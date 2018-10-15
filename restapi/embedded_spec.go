@@ -117,6 +117,43 @@ func init() {
         }
       }
     },
+    "/ranges/html": {
+      "get": {
+        "security": [],
+        "description": "Returns a list of shooting ranges as HTML page",
+        "produces": [
+          "text/html"
+        ],
+        "tags": [
+          "range"
+        ],
+        "summary": "List shooting ranges in the system as HTML page",
+        "operationId": "getRangesHtml",
+        "parameters": [
+          {
+            "type": "boolean",
+            "default": true,
+            "description": "Return active only ranges",
+            "name": "activeOnly",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/HtmlResponse"
+            }
+          },
+          "500": {
+            "description": "Retrieving list of ranges failed",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "/user": {
       "post": {
         "description": "This can only be done by the logged in user.",
@@ -356,6 +393,17 @@ func init() {
           "items": {
             "$ref": "#/definitions/Situation"
           }
+        }
+      }
+    },
+    "HtmlResponse": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object"
+        },
+        "template": {
+          "type": "string"
         }
       }
     },
@@ -676,6 +724,43 @@ func init() {
         }
       }
     },
+    "/ranges/html": {
+      "get": {
+        "security": [],
+        "description": "Returns a list of shooting ranges as HTML page",
+        "produces": [
+          "text/html"
+        ],
+        "tags": [
+          "range"
+        ],
+        "summary": "List shooting ranges in the system as HTML page",
+        "operationId": "getRangesHtml",
+        "parameters": [
+          {
+            "type": "boolean",
+            "default": true,
+            "description": "Return active only ranges",
+            "name": "activeOnly",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/HtmlResponse"
+            }
+          },
+          "500": {
+            "description": "Retrieving list of ranges failed",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
     "/user": {
       "post": {
         "description": "This can only be done by the logged in user.",
@@ -915,6 +1000,17 @@ func init() {
           "items": {
             "$ref": "#/definitions/Situation"
           }
+        }
+      }
+    },
+    "HtmlResponse": {
+      "type": "object",
+      "properties": {
+        "payload": {
+          "type": "object"
+        },
+        "template": {
+          "type": "string"
         }
       }
     },

@@ -19,6 +19,7 @@ var (
 func init() {
 	SwaggerJSON = json.RawMessage([]byte(`{
   "schemes": [
+    "http",
     "https"
   ],
   "swagger": "2.0",
@@ -40,6 +41,7 @@ func init() {
   "paths": {
     "/competitions/{competitionId}": {
       "get": {
+        "security": [],
         "description": "Returns a single competition",
         "produces": [
           "application/json"
@@ -76,10 +78,78 @@ func init() {
             }
           }
         }
+      },
+      "put": {
+        "description": "This can only be done by admin.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "competition"
+        ],
+        "summary": "Updated competition",
+        "operationId": "updateCompetiton",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of competition to update",
+            "name": "competitionId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Updated competition object",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Competition"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid competition supplied"
+          },
+          "404": {
+            "description": "Competition not found"
+          }
+        }
+      },
+      "delete": {
+        "description": "This can only be done by admin.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "competition"
+        ],
+        "summary": "Delete competition",
+        "operationId": "deleteCompetition",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of competition to delete",
+            "name": "competitionId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid competition supplied"
+          },
+          "404": {
+            "description": "Competition not found"
+          }
+        }
       }
     },
     "/range/{rangeId}": {
       "get": {
+        "security": [],
         "description": "Returns a single shooting range",
         "produces": [
           "application/json"
@@ -120,6 +190,7 @@ func init() {
     },
     "/ranges": {
       "get": {
+        "security": [],
         "description": "Returns a list of shooting ranges",
         "produces": [
           "application/json"
@@ -194,8 +265,46 @@ func init() {
         }
       }
     },
+    "/ranges/{rangeId}/competition": {
+      "post": {
+        "description": "This can only be done by admin.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "competition"
+        ],
+        "summary": "Create new competiton",
+        "operationId": "createCompetition",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the range the competition is created for",
+            "name": "rangeId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Created competition object",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Competition"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
     "/ranges/{rangeId}/competitions": {
       "get": {
+        "security": [],
         "description": "Returns a list of competitions for shooting range",
         "produces": [
           "application/json"
@@ -488,10 +597,10 @@ func init() {
     },
     "Competition": {
       "type": "object",
-      "required": [
-        "name"
-      ],
       "properties": {
+        "category": {
+          "$ref": "#/definitions/CompetitionCategory"
+        },
         "date": {
           "description": "date of the competition",
           "type": "string",
@@ -505,12 +614,42 @@ func init() {
           "type": "string",
           "example": "10 ran a dost"
         },
-        "situations": {
-          "description": "list of situations",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Situation"
-          }
+        "type": {
+          "$ref": "#/definitions/CompetitionType"
+        }
+      }
+    },
+    "CompetitionCategory": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "example": "KZ"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string",
+          "example": "Kratka zbran"
+        }
+      }
+    },
+    "CompetitionType": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "example": "P"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string",
+          "example": "Poharova"
         }
       }
     },
@@ -558,9 +697,6 @@ func init() {
     },
     "Situation": {
       "type": "object",
-      "required": [
-        "name"
-      ],
       "properties": {
         "id": {
           "type": "integer",
@@ -585,9 +721,6 @@ func init() {
     },
     "Target": {
       "type": "object",
-      "required": [
-        "name"
-      ],
       "properties": {
         "id": {
           "type": "integer",
@@ -603,9 +736,6 @@ func init() {
     },
     "TargetType": {
       "type": "object",
-      "required": [
-        "name"
-      ],
       "properties": {
         "hits": {
           "description": "Number of required hits",
@@ -748,6 +878,7 @@ func init() {
 }`))
 	FlatSwaggerJSON = json.RawMessage([]byte(`{
   "schemes": [
+    "http",
     "https"
   ],
   "swagger": "2.0",
@@ -769,6 +900,7 @@ func init() {
   "paths": {
     "/competitions/{competitionId}": {
       "get": {
+        "security": [],
         "description": "Returns a single competition",
         "produces": [
           "application/json"
@@ -805,10 +937,78 @@ func init() {
             }
           }
         }
+      },
+      "put": {
+        "description": "This can only be done by admin.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "competition"
+        ],
+        "summary": "Updated competition",
+        "operationId": "updateCompetiton",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of competition to update",
+            "name": "competitionId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Updated competition object",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Competition"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid competition supplied"
+          },
+          "404": {
+            "description": "Competition not found"
+          }
+        }
+      },
+      "delete": {
+        "description": "This can only be done by admin.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "competition"
+        ],
+        "summary": "Delete competition",
+        "operationId": "deleteCompetition",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of competition to delete",
+            "name": "competitionId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid competition supplied"
+          },
+          "404": {
+            "description": "Competition not found"
+          }
+        }
       }
     },
     "/range/{rangeId}": {
       "get": {
+        "security": [],
         "description": "Returns a single shooting range",
         "produces": [
           "application/json"
@@ -849,6 +1049,7 @@ func init() {
     },
     "/ranges": {
       "get": {
+        "security": [],
         "description": "Returns a list of shooting ranges",
         "produces": [
           "application/json"
@@ -923,8 +1124,46 @@ func init() {
         }
       }
     },
+    "/ranges/{rangeId}/competition": {
+      "post": {
+        "description": "This can only be done by admin.",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "competition"
+        ],
+        "summary": "Create new competiton",
+        "operationId": "createCompetition",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the range the competition is created for",
+            "name": "rangeId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Created competition object",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Competition"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
     "/ranges/{rangeId}/competitions": {
       "get": {
+        "security": [],
         "description": "Returns a list of competitions for shooting range",
         "produces": [
           "application/json"
@@ -1217,10 +1456,10 @@ func init() {
     },
     "Competition": {
       "type": "object",
-      "required": [
-        "name"
-      ],
       "properties": {
+        "category": {
+          "$ref": "#/definitions/CompetitionCategory"
+        },
         "date": {
           "description": "date of the competition",
           "type": "string",
@@ -1234,12 +1473,42 @@ func init() {
           "type": "string",
           "example": "10 ran a dost"
         },
-        "situations": {
-          "description": "list of situations",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Situation"
-          }
+        "type": {
+          "$ref": "#/definitions/CompetitionType"
+        }
+      }
+    },
+    "CompetitionCategory": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "example": "KZ"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string",
+          "example": "Kratka zbran"
+        }
+      }
+    },
+    "CompetitionType": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "example": "P"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string",
+          "example": "Poharova"
         }
       }
     },
@@ -1287,9 +1556,6 @@ func init() {
     },
     "Situation": {
       "type": "object",
-      "required": [
-        "name"
-      ],
       "properties": {
         "id": {
           "type": "integer",
@@ -1314,9 +1580,6 @@ func init() {
     },
     "Target": {
       "type": "object",
-      "required": [
-        "name"
-      ],
       "properties": {
         "id": {
           "type": "integer",
@@ -1332,9 +1595,6 @@ func init() {
     },
     "TargetType": {
       "type": "object",
-      "required": [
-        "name"
-      ],
       "properties": {
         "hits": {
           "description": "Number of required hits",

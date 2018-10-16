@@ -6,8 +6,6 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"strconv"
-
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -19,6 +17,9 @@ import (
 // swagger:model Competition
 type Competition struct {
 
+	// category
+	Category *CompetitionCategory `json:"category,omitempty"`
+
 	// date of the competition
 	// Format: date
 	Date strfmt.Date `json:"date,omitempty"`
@@ -27,32 +28,49 @@ type Competition struct {
 	ID int64 `json:"id,omitempty"`
 
 	// name
-	// Required: true
-	Name *string `json:"name"`
+	Name string `json:"name,omitempty"`
 
-	// list of situations
-	Situations []*Situation `json:"situations"`
+	// type
+	Type *CompetitionType `json:"type,omitempty"`
 }
 
 // Validate validates this competition
 func (m *Competition) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCategory(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateDate(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateSituations(formats); err != nil {
+	if err := m.validateType(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Competition) validateCategory(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Category) { // not required
+		return nil
+	}
+
+	if m.Category != nil {
+		if err := m.Category.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("category")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -69,35 +87,19 @@ func (m *Competition) validateDate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Competition) validateName(formats strfmt.Registry) error {
+func (m *Competition) validateType(formats strfmt.Registry) error {
 
-	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *Competition) validateSituations(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Situations) { // not required
+	if swag.IsZero(m.Type) { // not required
 		return nil
 	}
 
-	for i := 0; i < len(m.Situations); i++ {
-		if swag.IsZero(m.Situations[i]) { // not required
-			continue
-		}
-
-		if m.Situations[i] != nil {
-			if err := m.Situations[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("situations" + "." + strconv.Itoa(i))
-				}
-				return err
+	if m.Type != nil {
+		if err := m.Type.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("type")
 			}
+			return err
 		}
-
 	}
 
 	return nil

@@ -10,6 +10,7 @@ http://todo/terms/
 
 
     Schemes:
+      http
       https
     Host: localhost:8080
     BasePath: /v1

@@ -47,25 +47,31 @@ func NewLosAPI(spec *loads.Document) *LosAPI {
 		HTMLProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
 			return errors.NotImplemented("html producer has not yet been implemented")
 		}),
+		CompetitionCreateCompetitionHandler: competition.CreateCompetitionHandlerFunc(func(params competition.CreateCompetitionParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation CompetitionCreateCompetition has not yet been implemented")
+		}),
 		UserCreateUserHandler: user.CreateUserHandlerFunc(func(params user.CreateUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation UserCreateUser has not yet been implemented")
+		}),
+		CompetitionDeleteCompetitionHandler: competition.DeleteCompetitionHandlerFunc(func(params competition.DeleteCompetitionParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation CompetitionDeleteCompetition has not yet been implemented")
 		}),
 		UserDeleteUserHandler: user.DeleteUserHandlerFunc(func(params user.DeleteUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation UserDeleteUser has not yet been implemented")
 		}),
-		CompetitionGetCompetitionByIDHandler: competition.GetCompetitionByIDHandlerFunc(func(params competition.GetCompetitionByIDParams, principal *models.Principal) middleware.Responder {
+		CompetitionGetCompetitionByIDHandler: competition.GetCompetitionByIDHandlerFunc(func(params competition.GetCompetitionByIDParams) middleware.Responder {
 			return middleware.NotImplemented("operation CompetitionGetCompetitionByID has not yet been implemented")
 		}),
-		CompetitionGetCompetitionsHandler: competition.GetCompetitionsHandlerFunc(func(params competition.GetCompetitionsParams, principal *models.Principal) middleware.Responder {
+		CompetitionGetCompetitionsHandler: competition.GetCompetitionsHandlerFunc(func(params competition.GetCompetitionsParams) middleware.Responder {
 			return middleware.NotImplemented("operation CompetitionGetCompetitions has not yet been implemented")
 		}),
 		CompetitionGetCompetitionsHTMLHandler: competition.GetCompetitionsHTMLHandlerFunc(func(params competition.GetCompetitionsHTMLParams) middleware.Responder {
 			return middleware.NotImplemented("operation CompetitionGetCompetitionsHTML has not yet been implemented")
 		}),
-		RangeOperationsGetRangeByIDHandler: range_operations.GetRangeByIDHandlerFunc(func(params range_operations.GetRangeByIDParams, principal *models.Principal) middleware.Responder {
+		RangeOperationsGetRangeByIDHandler: range_operations.GetRangeByIDHandlerFunc(func(params range_operations.GetRangeByIDParams) middleware.Responder {
 			return middleware.NotImplemented("operation RangeOperationsGetRangeByID has not yet been implemented")
 		}),
-		RangeOperationsGetRangesHandler: range_operations.GetRangesHandlerFunc(func(params range_operations.GetRangesParams, principal *models.Principal) middleware.Responder {
+		RangeOperationsGetRangesHandler: range_operations.GetRangesHandlerFunc(func(params range_operations.GetRangesParams) middleware.Responder {
 			return middleware.NotImplemented("operation RangeOperationsGetRanges has not yet been implemented")
 		}),
 		RangeOperationsGetRangesHTMLHandler: range_operations.GetRangesHTMLHandlerFunc(func(params range_operations.GetRangesHTMLParams) middleware.Responder {
@@ -79,6 +85,9 @@ func NewLosAPI(spec *loads.Document) *LosAPI {
 		}),
 		UserLogoutUserHandler: user.LogoutUserHandlerFunc(func(params user.LogoutUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation UserLogoutUser has not yet been implemented")
+		}),
+		CompetitionUpdateCompetitonHandler: competition.UpdateCompetitonHandlerFunc(func(params competition.UpdateCompetitonParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation CompetitionUpdateCompetiton has not yet been implemented")
 		}),
 		UserUpdateUserHandler: user.UpdateUserHandlerFunc(func(params user.UpdateUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation UserUpdateUser has not yet been implemented")
@@ -130,8 +139,12 @@ type LosAPI struct {
 	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
 	APIAuthorizer runtime.Authorizer
 
+	// CompetitionCreateCompetitionHandler sets the operation handler for the create competition operation
+	CompetitionCreateCompetitionHandler competition.CreateCompetitionHandler
 	// UserCreateUserHandler sets the operation handler for the create user operation
 	UserCreateUserHandler user.CreateUserHandler
+	// CompetitionDeleteCompetitionHandler sets the operation handler for the delete competition operation
+	CompetitionDeleteCompetitionHandler competition.DeleteCompetitionHandler
 	// UserDeleteUserHandler sets the operation handler for the delete user operation
 	UserDeleteUserHandler user.DeleteUserHandler
 	// CompetitionGetCompetitionByIDHandler sets the operation handler for the get competition by Id operation
@@ -152,6 +165,8 @@ type LosAPI struct {
 	UserLoginUserHandler user.LoginUserHandler
 	// UserLogoutUserHandler sets the operation handler for the logout user operation
 	UserLogoutUserHandler user.LogoutUserHandler
+	// CompetitionUpdateCompetitonHandler sets the operation handler for the update competiton operation
+	CompetitionUpdateCompetitonHandler competition.UpdateCompetitonHandler
 	// UserUpdateUserHandler sets the operation handler for the update user operation
 	UserUpdateUserHandler user.UpdateUserHandler
 
@@ -225,8 +240,16 @@ func (o *LosAPI) Validate() error {
 		unregistered = append(unregistered, "LosAuthAuth")
 	}
 
+	if o.CompetitionCreateCompetitionHandler == nil {
+		unregistered = append(unregistered, "competition.CreateCompetitionHandler")
+	}
+
 	if o.UserCreateUserHandler == nil {
 		unregistered = append(unregistered, "user.CreateUserHandler")
+	}
+
+	if o.CompetitionDeleteCompetitionHandler == nil {
+		unregistered = append(unregistered, "competition.DeleteCompetitionHandler")
 	}
 
 	if o.UserDeleteUserHandler == nil {
@@ -267,6 +290,10 @@ func (o *LosAPI) Validate() error {
 
 	if o.UserLogoutUserHandler == nil {
 		unregistered = append(unregistered, "user.LogoutUserHandler")
+	}
+
+	if o.CompetitionUpdateCompetitonHandler == nil {
+		unregistered = append(unregistered, "competition.UpdateCompetitonHandler")
 	}
 
 	if o.UserUpdateUserHandler == nil {
@@ -389,7 +416,17 @@ func (o *LosAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
+	o.handlers["POST"]["/ranges/{rangeId}/competition"] = competition.NewCreateCompetition(o.context, o.CompetitionCreateCompetitionHandler)
+
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
 	o.handlers["POST"]["/user"] = user.NewCreateUser(o.context, o.UserCreateUserHandler)
+
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/competitions/{competitionId}"] = competition.NewDeleteCompetition(o.context, o.CompetitionDeleteCompetitionHandler)
 
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
@@ -440,6 +477,11 @@ func (o *LosAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/user/logout"] = user.NewLogoutUser(o.context, o.UserLogoutUserHandler)
+
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/competitions/{competitionId}"] = competition.NewUpdateCompetiton(o.context, o.CompetitionUpdateCompetitonHandler)
 
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)

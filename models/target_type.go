@@ -25,8 +25,7 @@ type TargetType struct {
 	ID int64 `json:"id,omitempty"`
 
 	// name
-	// Required: true
-	Name *string `json:"name"`
+	Name string `json:"name,omitempty"`
 }
 
 // Validate validates this target type
@@ -34,10 +33,6 @@ func (m *TargetType) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateHits(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -54,15 +49,6 @@ func (m *TargetType) validateHits(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumInt("hits", "body", int64(m.Hits), 1, false); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *TargetType) validateName(formats strfmt.Registry) error {
-
-	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
 	}
 

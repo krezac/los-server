@@ -12,7 +12,6 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // Situation situation
@@ -23,8 +22,7 @@ type Situation struct {
 	ID int64 `json:"id,omitempty"`
 
 	// name
-	// Required: true
-	Name *string `json:"name"`
+	Name string `json:"name,omitempty"`
 
 	// number
 	Number int64 `json:"number,omitempty"`
@@ -37,10 +35,6 @@ type Situation struct {
 func (m *Situation) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateTargets(formats); err != nil {
 		res = append(res, err)
 	}
@@ -48,15 +42,6 @@ func (m *Situation) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *Situation) validateName(formats strfmt.Registry) error {
-
-	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
 	return nil
 }
 

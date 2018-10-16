@@ -69,27 +69,32 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 	//
 	// Example:
 	// api.APIAuthorizer = security.Authorized()
+	api.CompetitionCreateCompetitionHandler = competition.CreateCompetitionHandlerFunc(func(params competition.CreateCompetitionParams, principal *models.Principal) middleware.Responder {
+		return middleware.NotImplemented("operation competition.CreateCompetition has not yet been implemented")
+	})
 	api.UserCreateUserHandler = user.CreateUserHandlerFunc(func(params user.CreateUserParams, principal *models.Principal) middleware.Responder {
 		return middleware.NotImplemented("operation user.CreateUser has not yet been implemented")
+	})
+	api.CompetitionDeleteCompetitionHandler = competition.DeleteCompetitionHandlerFunc(func(params competition.DeleteCompetitionParams, principal *models.Principal) middleware.Responder {
+		return middleware.NotImplemented("operation competition.DeleteCompetition has not yet been implemented")
 	})
 	api.UserDeleteUserHandler = user.DeleteUserHandlerFunc(func(params user.DeleteUserParams, principal *models.Principal) middleware.Responder {
 		return middleware.NotImplemented("operation user.DeleteUser has not yet been implemented")
 	})
-	api.CompetitionGetCompetitionByIDHandler = competition.GetCompetitionByIDHandlerFunc(func(params competition.GetCompetitionByIDParams, principal *models.Principal) middleware.Responder {
+	api.CompetitionGetCompetitionByIDHandler = competition.GetCompetitionByIDHandlerFunc(func(params competition.GetCompetitionByIDParams) middleware.Responder {
 		return middleware.NotImplemented("operation competition.GetCompetitionByID has not yet been implemented")
 	})
-	api.CompetitionGetCompetitionsHandler = competition.GetCompetitionsHandlerFunc(func(params competition.GetCompetitionsParams, principal *models.Principal) middleware.Responder {
+	api.CompetitionGetCompetitionsHandler = competition.GetCompetitionsHandlerFunc(func(params competition.GetCompetitionsParams) middleware.Responder {
 		return middleware.NotImplemented("operation competition.GetCompetitions has not yet been implemented")
 	})
 	api.CompetitionGetCompetitionsHTMLHandler = competition.GetCompetitionsHTMLHandlerFunc(func(params competition.GetCompetitionsHTMLParams) middleware.Responder {
 		return middleware.NotImplemented("operation competition.GetCompetitionsHTML has not yet been implemented")
 	})
-	api.RangeOperationsGetRangeByIDHandler = range_operations.GetRangeByIDHandlerFunc(func(params range_operations.GetRangeByIDParams, principal *models.Principal) middleware.Responder {
-		return getRangeByID(api, params, principal) // IMPL change against generated file
+	api.RangeOperationsGetRangeByIDHandler = range_operations.GetRangeByIDHandlerFunc(func(params range_operations.GetRangeByIDParams) middleware.Responder {
+		return getRangeByID(api, params) // IMPL change against generated file
 	})
-
-	api.RangeOperationsGetRangesHandler = range_operations.GetRangesHandlerFunc(func(params range_operations.GetRangesParams, principal *models.Principal) middleware.Responder {
-		return getRanges(api, params, principal) // IMPL change against generated file
+	api.RangeOperationsGetRangesHandler = range_operations.GetRangesHandlerFunc(func(params range_operations.GetRangesParams) middleware.Responder {
+		return getRanges(api, params) // IMPL change against generated file
 	})
 	api.RangeOperationsGetRangesHTMLHandler = range_operations.GetRangesHTMLHandlerFunc(func(params range_operations.GetRangesHTMLParams) middleware.Responder {
 		return getRangesHTML(api, params) // IMPL change against generated file
@@ -102,6 +107,9 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 	})
 	api.UserLogoutUserHandler = user.LogoutUserHandlerFunc(func(params user.LogoutUserParams, principal *models.Principal) middleware.Responder {
 		return middleware.NotImplemented("operation user.LogoutUser has not yet been implemented")
+	})
+	api.CompetitionUpdateCompetitonHandler = competition.UpdateCompetitonHandlerFunc(func(params competition.UpdateCompetitonParams, principal *models.Principal) middleware.Responder {
+		return middleware.NotImplemented("operation competition.UpdateCompetiton has not yet been implemented")
 	})
 	api.UserUpdateUserHandler = user.UpdateUserHandlerFunc(func(params user.UpdateUserParams, principal *models.Principal) middleware.Responder {
 		return middleware.NotImplemented("operation user.UpdateUser has not yet been implemented")

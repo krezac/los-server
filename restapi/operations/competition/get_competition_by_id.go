@@ -9,21 +9,19 @@ import (
 	"net/http"
 
 	middleware "github.com/go-openapi/runtime/middleware"
-
-	models "github.com/krezac/los-server/models"
 )
 
 // GetCompetitionByIDHandlerFunc turns a function with the right signature into a get competition by Id handler
-type GetCompetitionByIDHandlerFunc func(GetCompetitionByIDParams, *models.Principal) middleware.Responder
+type GetCompetitionByIDHandlerFunc func(GetCompetitionByIDParams) middleware.Responder
 
 // Handle executing the request and returning a response
-func (fn GetCompetitionByIDHandlerFunc) Handle(params GetCompetitionByIDParams, principal *models.Principal) middleware.Responder {
-	return fn(params, principal)
+func (fn GetCompetitionByIDHandlerFunc) Handle(params GetCompetitionByIDParams) middleware.Responder {
+	return fn(params)
 }
 
 // GetCompetitionByIDHandler interface for that can handle valid get competition by Id params
 type GetCompetitionByIDHandler interface {
-	Handle(GetCompetitionByIDParams, *models.Principal) middleware.Responder
+	Handle(GetCompetitionByIDParams) middleware.Responder
 }
 
 // NewGetCompetitionByID creates a new http.Handler for the get competition by Id operation
@@ -50,25 +48,12 @@ func (o *GetCompetitionByID) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 	}
 	var Params = NewGetCompetitionByIDParams()
 
-	uprinc, aCtx, err := o.Context.Authorize(r, route)
-	if err != nil {
-		o.Context.Respond(rw, r, route.Produces, route, err)
-		return
-	}
-	if aCtx != nil {
-		r = aCtx
-	}
-	var principal *models.Principal
-	if uprinc != nil {
-		principal = uprinc.(*models.Principal) // this is really a models.Principal, I promise
-	}
-
 	if err := o.Context.BindValidRequest(r, route, &Params); err != nil { // bind params
 		o.Context.Respond(rw, r, route.Produces, route, err)
 		return
 	}
 
-	res := o.Handler.Handle(Params, principal) // actually handle the request
+	res := o.Handler.Handle(Params) // actually handle the request
 
 	o.Context.Respond(rw, r, route.Produces, route, res)
 

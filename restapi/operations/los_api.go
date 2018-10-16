@@ -20,6 +20,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
+	"github.com/krezac/los-server/restapi/operations/competition"
 	"github.com/krezac/los-server/restapi/operations/range_operations"
 	"github.com/krezac/los-server/restapi/operations/user"
 
@@ -51,6 +52,15 @@ func NewLosAPI(spec *loads.Document) *LosAPI {
 		}),
 		UserDeleteUserHandler: user.DeleteUserHandlerFunc(func(params user.DeleteUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation UserDeleteUser has not yet been implemented")
+		}),
+		CompetitionGetCompetitionByIDHandler: competition.GetCompetitionByIDHandlerFunc(func(params competition.GetCompetitionByIDParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation CompetitionGetCompetitionByID has not yet been implemented")
+		}),
+		CompetitionGetCompetitionsHandler: competition.GetCompetitionsHandlerFunc(func(params competition.GetCompetitionsParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation CompetitionGetCompetitions has not yet been implemented")
+		}),
+		CompetitionGetCompetitionsHTMLHandler: competition.GetCompetitionsHTMLHandlerFunc(func(params competition.GetCompetitionsHTMLParams) middleware.Responder {
+			return middleware.NotImplemented("operation CompetitionGetCompetitionsHTML has not yet been implemented")
 		}),
 		RangeOperationsGetRangeByIDHandler: range_operations.GetRangeByIDHandlerFunc(func(params range_operations.GetRangeByIDParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation RangeOperationsGetRangeByID has not yet been implemented")
@@ -124,6 +134,12 @@ type LosAPI struct {
 	UserCreateUserHandler user.CreateUserHandler
 	// UserDeleteUserHandler sets the operation handler for the delete user operation
 	UserDeleteUserHandler user.DeleteUserHandler
+	// CompetitionGetCompetitionByIDHandler sets the operation handler for the get competition by Id operation
+	CompetitionGetCompetitionByIDHandler competition.GetCompetitionByIDHandler
+	// CompetitionGetCompetitionsHandler sets the operation handler for the get competitions operation
+	CompetitionGetCompetitionsHandler competition.GetCompetitionsHandler
+	// CompetitionGetCompetitionsHTMLHandler sets the operation handler for the get competitions Html operation
+	CompetitionGetCompetitionsHTMLHandler competition.GetCompetitionsHTMLHandler
 	// RangeOperationsGetRangeByIDHandler sets the operation handler for the get range by Id operation
 	RangeOperationsGetRangeByIDHandler range_operations.GetRangeByIDHandler
 	// RangeOperationsGetRangesHandler sets the operation handler for the get ranges operation
@@ -215,6 +231,18 @@ func (o *LosAPI) Validate() error {
 
 	if o.UserDeleteUserHandler == nil {
 		unregistered = append(unregistered, "user.DeleteUserHandler")
+	}
+
+	if o.CompetitionGetCompetitionByIDHandler == nil {
+		unregistered = append(unregistered, "competition.GetCompetitionByIDHandler")
+	}
+
+	if o.CompetitionGetCompetitionsHandler == nil {
+		unregistered = append(unregistered, "competition.GetCompetitionsHandler")
+	}
+
+	if o.CompetitionGetCompetitionsHTMLHandler == nil {
+		unregistered = append(unregistered, "competition.GetCompetitionsHTMLHandler")
 	}
 
 	if o.RangeOperationsGetRangeByIDHandler == nil {
@@ -367,6 +395,21 @@ func (o *LosAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/user/{username}"] = user.NewDeleteUser(o.context, o.UserDeleteUserHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/competitions/{competitionId}"] = competition.NewGetCompetitionByID(o.context, o.CompetitionGetCompetitionByIDHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/ranges/{rangeId}/competitions"] = competition.NewGetCompetitions(o.context, o.CompetitionGetCompetitionsHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/ranges/{rangeId}/competitions/html"] = competition.NewGetCompetitionsHTML(o.context, o.CompetitionGetCompetitionsHTMLHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)

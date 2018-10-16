@@ -121,6 +121,86 @@ paths:
           description: "Shooting range not found"
           schema:
             $ref: "#/definitions/ApiResponse"
+  /ranges/{rangeId}/competitions:
+    get:
+      tags:
+      - "competition"
+      summary: "List competitions for given shooting"
+      description: "Returns a list of competitions for shooting range"
+      operationId: "getCompetitions"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "rangeId"
+        in: "path"
+        description: "ID of shooting range to read the competitions for"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Competition"
+        500:
+          description: "Retrieving list of competitions failed"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  /ranges/{rangeId}/competitions/html:
+    get:
+      tags:
+      - "competition"
+      summary: "List competitions for given shooting range as HTML page"
+      description: "Returns a list of competitions for shooting range as HTML page"
+      operationId: "getCompetitionsHtml"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "rangeId"
+        in: "path"
+        description: "ID of shooting range to read the competitions for"
+        required: true
+        type: "integer"
+        format: "int64"
+      security: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/HtmlResponse"
+        500:
+          description: "Retrieving list of ranges failed"
+          schema:
+            type: "string"
+  /competitions/{competitionId}:
+    get:
+      tags:
+      - "competition"
+      summary: "Find competition by ID"
+      description: "Returns a single competition"
+      operationId: "getCompetitionById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "competitionId"
+        in: "path"
+        description: "ID of competition to return"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Competition"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Shooting range not competition"
+          schema:
+            $ref: "#/definitions/ApiResponse"
   /user:
     post:
       tags:

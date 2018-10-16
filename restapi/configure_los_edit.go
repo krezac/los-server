@@ -17,9 +17,9 @@ import (
 
 	"github.com/krezac/los-server/models"
 	"github.com/krezac/los-server/restapi/operations"
+	"github.com/krezac/los-server/restapi/operations/competition"
 	"github.com/krezac/los-server/restapi/operations/range_operations"
 	"github.com/krezac/los-server/restapi/operations/user"
-	_ "github.com/krezac/los-server/swaggeruistatik" // this is to make sure the initializer gets called
 )
 
 //go:generate swagger generate server --target .. --name Los --spec ../swagger/los-server.yml --principal models.Principal
@@ -75,6 +75,15 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 	api.UserDeleteUserHandler = user.DeleteUserHandlerFunc(func(params user.DeleteUserParams, principal *models.Principal) middleware.Responder {
 		return middleware.NotImplemented("operation user.DeleteUser has not yet been implemented")
 	})
+	api.CompetitionGetCompetitionByIDHandler = competition.GetCompetitionByIDHandlerFunc(func(params competition.GetCompetitionByIDParams, principal *models.Principal) middleware.Responder {
+		return middleware.NotImplemented("operation competition.GetCompetitionByID has not yet been implemented")
+	})
+	api.CompetitionGetCompetitionsHandler = competition.GetCompetitionsHandlerFunc(func(params competition.GetCompetitionsParams, principal *models.Principal) middleware.Responder {
+		return middleware.NotImplemented("operation competition.GetCompetitions has not yet been implemented")
+	})
+	api.CompetitionGetCompetitionsHTMLHandler = competition.GetCompetitionsHTMLHandlerFunc(func(params competition.GetCompetitionsHTMLParams) middleware.Responder {
+		return middleware.NotImplemented("operation competition.GetCompetitionsHTML has not yet been implemented")
+	})
 	api.RangeOperationsGetRangeByIDHandler = range_operations.GetRangeByIDHandlerFunc(func(params range_operations.GetRangeByIDParams, principal *models.Principal) middleware.Responder {
 		return getRangeByID(api, params, principal) // IMPL change against generated file
 	})
@@ -125,5 +134,5 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 // So this is a good place to plug in a panic handling middleware, logging and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
 
-	return logrusMiddleware(swaggerUiMiddleware(handler)) // IMPL change against generated file
+	return logrusMiddleware(staticContentMiddleware(handler)) // IMPL change against generated file
 }

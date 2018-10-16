@@ -38,6 +38,46 @@ func init() {
   "host": "localhost:8080",
   "basePath": "/v1",
   "paths": {
+    "/competitions/{competitionId}": {
+      "get": {
+        "description": "Returns a single competition",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "competition"
+        ],
+        "summary": "Find competition by ID",
+        "operationId": "getCompetitionById",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of competition to return",
+            "name": "competitionId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Competition"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Shooting range not competition",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
+          }
+        }
+      }
+    },
     "/range/{rangeId}": {
       "get": {
         "description": "Returns a single shooting range",
@@ -136,6 +176,84 @@ func init() {
             "description": "Return active only ranges",
             "name": "activeOnly",
             "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/HtmlResponse"
+            }
+          },
+          "500": {
+            "description": "Retrieving list of ranges failed",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/ranges/{rangeId}/competitions": {
+      "get": {
+        "description": "Returns a list of competitions for shooting range",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "competition"
+        ],
+        "summary": "List competitions for given shooting",
+        "operationId": "getCompetitions",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of shooting range to read the competitions for",
+            "name": "rangeId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Competition"
+              }
+            }
+          },
+          "500": {
+            "description": "Retrieving list of competitions failed",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
+          }
+        }
+      }
+    },
+    "/ranges/{rangeId}/competitions/html": {
+      "get": {
+        "security": [],
+        "description": "Returns a list of competitions for shooting range as HTML page",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "competition"
+        ],
+        "summary": "List competitions for given shooting range as HTML page",
+        "operationId": "getCompetitionsHtml",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of shooting range to read the competitions for",
+            "name": "rangeId",
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {
@@ -649,6 +767,46 @@ func init() {
   "host": "localhost:8080",
   "basePath": "/v1",
   "paths": {
+    "/competitions/{competitionId}": {
+      "get": {
+        "description": "Returns a single competition",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "competition"
+        ],
+        "summary": "Find competition by ID",
+        "operationId": "getCompetitionById",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of competition to return",
+            "name": "competitionId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Competition"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Shooting range not competition",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
+          }
+        }
+      }
+    },
     "/range/{rangeId}": {
       "get": {
         "description": "Returns a single shooting range",
@@ -747,6 +905,84 @@ func init() {
             "description": "Return active only ranges",
             "name": "activeOnly",
             "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/HtmlResponse"
+            }
+          },
+          "500": {
+            "description": "Retrieving list of ranges failed",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/ranges/{rangeId}/competitions": {
+      "get": {
+        "description": "Returns a list of competitions for shooting range",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "competition"
+        ],
+        "summary": "List competitions for given shooting",
+        "operationId": "getCompetitions",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of shooting range to read the competitions for",
+            "name": "rangeId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Competition"
+              }
+            }
+          },
+          "500": {
+            "description": "Retrieving list of competitions failed",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
+          }
+        }
+      }
+    },
+    "/ranges/{rangeId}/competitions/html": {
+      "get": {
+        "security": [],
+        "description": "Returns a list of competitions for shooting range as HTML page",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "competition"
+        ],
+        "summary": "List competitions for given shooting range as HTML page",
+        "operationId": "getCompetitionsHtml",
+        "parameters": [
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of shooting range to read the competitions for",
+            "name": "rangeId",
+            "in": "path",
+            "required": true
           }
         ],
         "responses": {

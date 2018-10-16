@@ -10,7 +10,6 @@ import (
 	"github.com/krezac/los-server/models"
 	"github.com/krezac/los-server/restapi/operations"
 	"github.com/krezac/los-server/restapi/operations/range_operations"
-	"github.com/rakyll/statik/fs"
 )
 
 var logrusHandler func(http.Handler) http.Handler
@@ -106,7 +105,7 @@ func getRangesHTML(api *operations.LosAPI, params range_operations.GetRangesHTML
 }
 
 // this is middleware to serve swagger-ui UI
-func swaggerUiMiddleware(handler http.Handler) http.Handler {
+func staticContentMiddleware(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Shortcut helpers for swagger-ui
 		if r.URL.Path == "/swagger-ui" || r.URL.Path == "/swaggerui" || r.URL.Path == "/api/help" {
@@ -115,13 +114,8 @@ func swaggerUiMiddleware(handler http.Handler) http.Handler {
 		}
 		// Serving ./swagger-ui/
 		if strings.Index(r.URL.Path, "/swagger-ui/") == 0 {
-			statikFS, err := fs.New()
-			if err != nil {
-				panic(err)
-			}
-			staticServer := http.FileServer(statikFS)
-			http.StripPrefix("/swagger-ui/", staticServer).ServeHTTP(w, r)
-
+			fs := http.FileServer(http.Dir("swagger-ui"))
+			http.StripPrefix("/swagger-ui/", fs).ServeHTTP(w, r)
 			return
 		} else if strings.Index(r.URL.Path, "/static/") == 0 {
 			fs := http.FileServer(http.Dir("static"))

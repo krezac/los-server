@@ -338,6 +338,9 @@ definitions:
         type: "number"
         format: "double"
         example: "14.7349610"
+      url:
+        type: "string"
+        example: "https://zbranekvalitne.cz/strelnice/ssk-celakovice"
       active:
         type: "boolean"
         description: "shooting range active"

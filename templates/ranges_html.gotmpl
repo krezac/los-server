@@ -14,6 +14,7 @@
 <div class="divTableHead">Name</div>
 <div class="divTableHead">Latitude</div>
 <div class="divTableHead">Longitude</div>
+<div class="divTableHead">Info</div>
 <div class="divTableHead">Map</div>
 <div class="divTableHead">Competitions</div>
 </div>
@@ -24,6 +25,7 @@
     <div class="divTableCell">{{ .Name }}</div>
     <div class="divTableCell">{{ .Latitude }}</div>
     <div class="divTableCell">{{ .Longitude }}</div>
+    <div class="divTableCell"><a href="{{ .URL }}" target="_blank">Info</a></div>
     <div class="divTableCell"><a href="https://www.google.com/maps/search/?api=1&query={{ .Latitude }},{{ .Longitude }}" target="_blank">Map</a></div>
     <div class="divTableCell"><a href="{{ .ID }}/competitions/html">Competitions</a></div>
 </div>

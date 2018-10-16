@@ -431,6 +431,10 @@ func init() {
         "name": {
           "type": "string",
           "example": "SSK Celakovice"
+        },
+        "url": {
+          "type": "string",
+          "example": "https://zbranekvalitne.cz/strelnice/ssk-celakovice"
         }
       }
     },
@@ -1038,6 +1042,10 @@ func init() {
         "name": {
           "type": "string",
           "example": "SSK Celakovice"
+        },
+        "url": {
+          "type": "string",
+          "example": "https://zbranekvalitne.cz/strelnice/ssk-celakovice"
         }
       }
     },

@@ -29,6 +29,9 @@ type Range struct {
 
 	// name
 	Name string `json:"name,omitempty"`
+
+	// url
+	URL string `json:"url,omitempty"`
 }
 
 // Validate validates this range

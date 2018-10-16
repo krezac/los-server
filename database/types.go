@@ -10,6 +10,7 @@ type Range struct {
 	Name      string    `db:"NAME"`
 	Latitude  float64   `db:"LATITUDE"`
 	Longitude float64   `db:"LONGITUDE"`
+	URL       string    `db:"URL"`
 	Created   time.Time `db:"CREATED_TS"`
 	Active    bool      `db:"ACTIVE"`
 }

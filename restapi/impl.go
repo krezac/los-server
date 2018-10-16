@@ -41,6 +41,7 @@ func getRangeByID(api *operations.LosAPI, params range_operations.GetRangeByIDPa
 		Name:      dbr.Name,
 		Latitude:  dbr.Latitude,
 		Longitude: dbr.Longitude,
+		URL:       dbr.URL,
 		Active:    dbr.Active,
 	}
 
@@ -63,6 +64,7 @@ func getRanges(api *operations.LosAPI, params range_operations.GetRangesParams, 
 			Name:      dbr.Name,
 			Latitude:  dbr.Latitude,
 			Longitude: dbr.Longitude,
+			URL:       dbr.URL,
 			Active:    dbr.Active,
 		}
 		ranges = append(ranges, &r)
@@ -87,6 +89,7 @@ func getRangesHTML(api *operations.LosAPI, params range_operations.GetRangesHTML
 			Name:      dbr.Name,
 			Latitude:  dbr.Latitude,
 			Longitude: dbr.Longitude,
+			URL:       dbr.URL,
 			Active:    dbr.Active,
 		}
 		ranges = append(ranges, &r)

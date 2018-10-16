@@ -9,11 +9,11 @@ DELETE FROM ranges;
 
 -- create
 
--- source of data: http://zbranekvalitne.cz/strelecka-mapa/data.json
-INSERT INTO ranges (ID, NAME, LATITUDE, LONGITUDE, ACTIVE) VALUES
-	(1, 'SSK Čelákovice', 50.148425000000, 14.735038888900, 1),
-	(2, 'SSK Žalany', 50.596953611100, 13.893513333300, 1),
-	(3, 'AVIM Praha', 50.091916666700, 14.441044444400, 1);
+-- source of data: http://zbranekvalitne.cz/strelecka-mapa/data.json (see real data generator in scripts/data)
+INSERT INTO ranges (ID, NAME, LATITUDE, LONGITUDE, URL) VALUES
+	(1, 'SSK Čelákovice TEST', 50.148425000000, 14.735038888900, 'https://zbranekvalitne.cz/strelnice/ssk-celakovice'),
+	(2, 'SSK Žalany TEST', 50.596953611100, 13.893513333300, 'https://zbranekvalitne.cz/strelnice/zalany'),
+	(3, 'AVIM Praha TEST', 50.091916666700, 14.441044444400, 'https://zbranekvalitne.cz/strelnice/avim-praha');
 
 INSERT INTO competition_types (ID, CODE, NAME) VALUES
 	(1, 'P', 'Pohárová'),

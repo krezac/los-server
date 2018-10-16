@@ -21,6 +21,7 @@ import (
 	"github.com/go-openapi/swag"
 
 	"github.com/krezac/los-server/restapi/operations/competition"
+	"github.com/krezac/los-server/restapi/operations/login"
 	"github.com/krezac/los-server/restapi/operations/range_operations"
 	"github.com/krezac/los-server/restapi/operations/user"
 
@@ -80,11 +81,11 @@ func NewLosAPI(spec *loads.Document) *LosAPI {
 		UserGetUserByNameHandler: user.GetUserByNameHandlerFunc(func(params user.GetUserByNameParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation UserGetUserByName has not yet been implemented")
 		}),
-		UserLoginUserHandler: user.LoginUserHandlerFunc(func(params user.LoginUserParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation UserLoginUser has not yet been implemented")
+		LoginLoginUserHandler: login.LoginUserHandlerFunc(func(params login.LoginUserParams) middleware.Responder {
+			return middleware.NotImplemented("operation LoginLoginUser has not yet been implemented")
 		}),
-		UserLogoutUserHandler: user.LogoutUserHandlerFunc(func(params user.LogoutUserParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation UserLogoutUser has not yet been implemented")
+		LoginLogoutUserHandler: login.LogoutUserHandlerFunc(func(params login.LogoutUserParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation LoginLogoutUser has not yet been implemented")
 		}),
 		CompetitionUpdateCompetitonHandler: competition.UpdateCompetitonHandlerFunc(func(params competition.UpdateCompetitonParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation CompetitionUpdateCompetiton has not yet been implemented")
@@ -161,10 +162,10 @@ type LosAPI struct {
 	RangeOperationsGetRangesHTMLHandler range_operations.GetRangesHTMLHandler
 	// UserGetUserByNameHandler sets the operation handler for the get user by name operation
 	UserGetUserByNameHandler user.GetUserByNameHandler
-	// UserLoginUserHandler sets the operation handler for the login user operation
-	UserLoginUserHandler user.LoginUserHandler
-	// UserLogoutUserHandler sets the operation handler for the logout user operation
-	UserLogoutUserHandler user.LogoutUserHandler
+	// LoginLoginUserHandler sets the operation handler for the login user operation
+	LoginLoginUserHandler login.LoginUserHandler
+	// LoginLogoutUserHandler sets the operation handler for the logout user operation
+	LoginLogoutUserHandler login.LogoutUserHandler
 	// CompetitionUpdateCompetitonHandler sets the operation handler for the update competiton operation
 	CompetitionUpdateCompetitonHandler competition.UpdateCompetitonHandler
 	// UserUpdateUserHandler sets the operation handler for the update user operation
@@ -284,12 +285,12 @@ func (o *LosAPI) Validate() error {
 		unregistered = append(unregistered, "user.GetUserByNameHandler")
 	}
 
-	if o.UserLoginUserHandler == nil {
-		unregistered = append(unregistered, "user.LoginUserHandler")
+	if o.LoginLoginUserHandler == nil {
+		unregistered = append(unregistered, "login.LoginUserHandler")
 	}
 
-	if o.UserLogoutUserHandler == nil {
-		unregistered = append(unregistered, "user.LogoutUserHandler")
+	if o.LoginLogoutUserHandler == nil {
+		unregistered = append(unregistered, "login.LogoutUserHandler")
 	}
 
 	if o.CompetitionUpdateCompetitonHandler == nil {
@@ -468,15 +469,15 @@ func (o *LosAPI) initHandlerCache() {
 	}
 	o.handlers["GET"]["/user/{username}"] = user.NewGetUserByName(o.context, o.UserGetUserByNameHandler)
 
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/user/login"] = user.NewLoginUser(o.context, o.UserLoginUserHandler)
+	o.handlers["POST"]["/user/login"] = login.NewLoginUser(o.context, o.LoginLoginUserHandler)
 
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/user/logout"] = user.NewLogoutUser(o.context, o.UserLogoutUserHandler)
+	o.handlers["GET"]["/user/logout"] = login.NewLogoutUser(o.context, o.LoginLogoutUserHandler)
 
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)

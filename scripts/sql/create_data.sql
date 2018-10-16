@@ -32,4 +32,5 @@ INSERT INTO competitions (ID, NAME, EVENT_DATE, RANGE_ID, CATEGORY_ID, TYPE_ID) 
 	(2, 'Velka rana', '2018-10-28', 1, 2, 2);
 
 INSERT INTO users (ID, LOGIN, PASSWORD) VALUES
-	(1, 'user1@dev.los', 'pass1');
+	(1, 'user1@dev.los', '$2a$10$pF0t.w3y.zrra2tj9j5U1eU9XkVXoze83jRbmJlqJfAqhEeU1SvwK'),
+	(2, 'user2@dev.los', '$2a$10$pF0t.w3y.zrra2tj9j5U1eU9XkVXoze83jRbmJlqJfAqhEeU1SvwK');

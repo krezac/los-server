@@ -12,6 +12,8 @@ info:
 host: "localhost:8080"
 basePath: "/v1"
 tags:
+- name: "login"
+  description: "User authentication - login / logout"
 - name: "range"
   description: "Access to shooting ranges"
 - name: "competition"
@@ -41,6 +43,8 @@ tags:
 schemes:
 - "http"
 - "https"
+consumes:  # these need to be on top level to validate payloads correctly 
+- "application/json"
 paths:
   /ranges:
     get:
@@ -297,30 +301,27 @@ paths:
         default:
           description: "successful operation"
   /user/login:
-    get:
+    post:
       tags:
-      - "user"
+      - "login"
       summary: "Logs user into the system"
       description: ""
       operationId: "loginUser"
       produces:
       - "application/json"
       parameters:
-      - name: "username"
-        in: "query"
-        description: "The user name for login"
+      - in: "body"
+        name: "body"
+        description: "Created competition object"
         required: true
-        type: "string"
-      - name: "password"
-        in: "query"
-        description: "The password for login in clear text"
-        required: true
-        type: "string"
+        schema:
+          $ref: "#/definitions/LoginRequest"
+      security: []
       responses:
         200:
           description: "successful operation"
           schema:
-            type: "string"
+            $ref: "#/definitions/LoginResponse"
           headers:
             X-Rate-Limit:
               type: "integer"
@@ -331,11 +332,17 @@ paths:
               format: "date-time"
               description: "date in UTC when token expires"
         400:
+          description: "Invalid payload or empty login passed"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        401:
           description: "Invalid username/password supplied"
+          schema:
+            $ref: "#/definitions/ApiResponse"
   /user/logout:
     get:
       tags:
-      - "user"
+      - "login"
       summary: "Logs out current logged in user session"
       description: ""
       operationId: "logoutUser"
@@ -477,6 +484,18 @@ definitions:
         type: "string"
       payload:
         type: "object"
+  LoginRequest:
+    type: "object"
+    properties:
+      login:
+        type: "string"
+      password:
+        type: "string"
+  LoginResponse:
+    type: "object"
+    properties:
+      token:
+        type: "string"
   Range:
     type: "object"
     properties:

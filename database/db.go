@@ -42,3 +42,21 @@ func (db *Database) GetRangeByID(id int64) (*Range, error) {
 	}
 	return &r, nil
 }
+
+func (db *Database) GetUserByID(id int64) (*User, error) {
+	u := User{}
+	err := db.db.Get(&u, "SELECT * FROM users WHERE id=?", id)
+	if err != nil {
+		return nil, err
+	}
+	return &u, nil
+}
+
+func (db *Database) GetUserByLogin(login string) (*User, error) {
+	u := User{}
+	err := db.db.Get(&u, "SELECT * FROM users WHERE login=? AND ACTIVE<>0", login)
+	if err != nil {
+		return nil, err
+	}
+	return &u, nil
+}

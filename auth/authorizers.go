@@ -2,6 +2,7 @@ package auth
 
 import (
 	"crypto/rsa"
+	"fmt"
 	"io/ioutil"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -9,13 +10,15 @@ import (
 	models "github.com/krezac/los-server/models"
 )
 
-// code form github.com/go-swagger/go-swagger/examples/composed-auth/auth/authorizers.go
+type JwtExtraOptions struct {
+	JwtSigningKey string `long:"jwt-signing-key" description:"Key to sign JWT tokens" env:"JWT_SIGNING_KEY" required:"true"`
+	JwtVerifyKey  string `long:"jwt-verify-key" description:"Key to verify JWT tokens" env:"JWT_VERIFY_KEY" required:"true"`
+	JwtIssuerName string `long:"jwt-issuer-name" description:"Issuer name for JWT tokens" env:"JWT_ISSUER_NAME" required:"true"`
+}
 
-const (
-	// currently unused: privateKeyPath = "keys/apiKey.prv"
-	publicKeyPath = "keys/dev_cert.pem"
-	issuerName    = "los.dev"
-)
+var JwtExtraOptionsVar = &JwtExtraOptions{}
+
+// code form github.com/go-swagger/go-swagger/examples/composed-auth/auth/authorizers.go
 
 var (
 	// Keys used to sign and verify our tokens
@@ -29,18 +32,6 @@ type roleClaims struct {
 	jwt.StandardClaims
 }
 
-func init() {
-	// loads public keys to verify our tokens
-	verifyKeyBuf, err := ioutil.ReadFile(publicKeyPath)
-	if err != nil {
-		panic("Cannot load public key for tokens")
-	}
-	verifyKey, err = jwt.ParseRSAPublicKeyFromPEM(verifyKeyBuf)
-	if err != nil {
-		panic("Invalid public key for tokens")
-	}
-}
-
 // Customized authorizer methods for our sample API
 
 // HasRole tells if the Bearer token is a JWT signed by us with a claim to be
@@ -49,7 +40,7 @@ func init() {
 func HasRole(token string, scopes []string) (*models.Principal, error) {
 	claims, err := parseAndCheckToken(token)
 	if err == nil {
-		if claims.Issuer == issuerName {
+		if claims.Issuer == JwtExtraOptionsVar.JwtIssuerName {
 			isInScopes := false
 			claimedRoles := []string{}
 			for _, scope := range scopes {
@@ -74,6 +65,19 @@ func HasRole(token string, scopes []string) (*models.Principal, error) {
 }
 
 func parseAndCheckToken(token string) (*roleClaims, error) {
+	if verifyKey == nil {
+		// loads public keys to verify our tokens
+		verifyKeyBuf, err := ioutil.ReadFile(JwtExtraOptionsVar.JwtVerifyKey)
+		if err != nil {
+			fmt.Printf("%#v", JwtExtraOptionsVar)
+			panic("Cannot load public key for tokens " + JwtExtraOptionsVar.JwtVerifyKey + " " + err.Error())
+		}
+		verifyKey, err = jwt.ParseRSAPublicKeyFromPEM(verifyKeyBuf)
+		if err != nil {
+			panic("Invalid public key for tokens " + err.Error())
+		}
+
+	}
 	// the API key is a JWT signed by us with a claim to be a reseller
 	parsedToken, err := jwt.ParseWithClaims(token, &roleClaims{}, func(parsedToken *jwt.Token) (interface{}, error) {
 		// the key used to validate tokens

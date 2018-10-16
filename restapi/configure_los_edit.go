@@ -14,10 +14,13 @@ import (
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
+	swag "github.com/go-openapi/swag"
 
+	"github.com/krezac/los-server/auth"
 	"github.com/krezac/los-server/models"
 	"github.com/krezac/los-server/restapi/operations"
 	"github.com/krezac/los-server/restapi/operations/competition"
+	"github.com/krezac/los-server/restapi/operations/login"
 	"github.com/krezac/los-server/restapi/operations/range_operations"
 	"github.com/krezac/los-server/restapi/operations/user"
 )
@@ -27,7 +30,12 @@ import (
 var db *database.Database
 
 func configureFlags(api *operations.LosAPI) {
-	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
+	api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{
+		swag.CommandLineOptionsGroup{
+			ShortDescription: "JWT Options",
+			Options:          auth.JwtExtraOptionsVar,
+		},
+	}
 }
 
 func configureAPI(api *operations.LosAPI) http.Handler {
@@ -102,11 +110,11 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 	api.UserGetUserByNameHandler = user.GetUserByNameHandlerFunc(func(params user.GetUserByNameParams, principal *models.Principal) middleware.Responder {
 		return middleware.NotImplemented("operation user.GetUserByName has not yet been implemented")
 	})
-	api.UserLoginUserHandler = user.LoginUserHandlerFunc(func(params user.LoginUserParams, principal *models.Principal) middleware.Responder {
-		return middleware.NotImplemented("operation user.LoginUser has not yet been implemented")
+	api.LoginLoginUserHandler = login.LoginUserHandlerFunc(func(params login.LoginUserParams) middleware.Responder {
+		return loginUser(api, params) // IMPL change against generated file
 	})
-	api.UserLogoutUserHandler = user.LogoutUserHandlerFunc(func(params user.LogoutUserParams, principal *models.Principal) middleware.Responder {
-		return middleware.NotImplemented("operation user.LogoutUser has not yet been implemented")
+	api.LoginLogoutUserHandler = login.LogoutUserHandlerFunc(func(params login.LogoutUserParams, principal *models.Principal) middleware.Responder {
+		return logoutUser(api, params, principal) // IMPL change against generated file
 	})
 	api.CompetitionUpdateCompetitonHandler = competition.UpdateCompetitonHandlerFunc(func(params competition.UpdateCompetitonParams, principal *models.Principal) middleware.Responder {
 		return middleware.NotImplemented("operation competition.UpdateCompetiton has not yet been implemented")

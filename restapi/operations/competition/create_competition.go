@@ -35,7 +35,7 @@ func NewCreateCompetition(ctx *middleware.Context, handler CreateCompetitionHand
 
 Create new competiton
 
-This can only be done by admin.
+This can only be done by admin. Only id needs to be probided for subobjects (type, category).
 
 */
 type CreateCompetition struct {

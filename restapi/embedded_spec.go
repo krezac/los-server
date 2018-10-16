@@ -18,6 +18,9 @@ var (
 
 func init() {
 	SwaggerJSON = json.RawMessage([]byte(`{
+  "consumes": [
+    "application/json"
+  ],
   "schemes": [
     "http",
     "https"
@@ -267,7 +270,7 @@ func init() {
     },
     "/ranges/{rangeId}/competition": {
       "post": {
-        "description": "This can only be done by admin.",
+        "description": "This can only be done by admin. Only id needs to be probided for subobjects (type, category).",
         "produces": [
           "application/json"
         ],
@@ -411,36 +414,32 @@ func init() {
       }
     },
     "/user/login": {
-      "get": {
+      "post": {
+        "security": [],
         "produces": [
           "application/json"
         ],
         "tags": [
-          "user"
+          "login"
         ],
         "summary": "Logs user into the system",
         "operationId": "loginUser",
         "parameters": [
           {
-            "type": "string",
-            "description": "The user name for login",
-            "name": "username",
-            "in": "query",
-            "required": true
-          },
-          {
-            "type": "string",
-            "description": "The password for login in clear text",
-            "name": "password",
-            "in": "query",
-            "required": true
+            "description": "Created competition object",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginRequest"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "successful operation",
             "schema": {
-              "type": "string"
+              "$ref": "#/definitions/LoginResponse"
             },
             "headers": {
               "X-Expires-After": {
@@ -456,7 +455,16 @@ func init() {
             }
           },
           "400": {
-            "description": "Invalid username/password supplied"
+            "description": "Invalid payload or empty login passed",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
+          },
+          "401": {
+            "description": "Invalid username/password supplied",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
           }
         }
       }
@@ -467,7 +475,7 @@ func init() {
           "application/json"
         ],
         "tags": [
-          "user"
+          "login"
         ],
         "summary": "Logs out current logged in user session",
         "operationId": "logoutUser",
@@ -664,6 +672,25 @@ func init() {
         }
       }
     },
+    "LoginRequest": {
+      "type": "object",
+      "properties": {
+        "login": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "LoginResponse": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      }
+    },
     "Range": {
       "type": "object",
       "properties": {
@@ -822,6 +849,10 @@ func init() {
     }
   ],
   "tags": [
+    {
+      "description": "User authentication - login / logout",
+      "name": "login"
+    },
     {
       "description": "Access to shooting ranges",
       "name": "range"
@@ -877,6 +908,9 @@ func init() {
   }
 }`))
 	FlatSwaggerJSON = json.RawMessage([]byte(`{
+  "consumes": [
+    "application/json"
+  ],
   "schemes": [
     "http",
     "https"
@@ -1126,7 +1160,7 @@ func init() {
     },
     "/ranges/{rangeId}/competition": {
       "post": {
-        "description": "This can only be done by admin.",
+        "description": "This can only be done by admin. Only id needs to be probided for subobjects (type, category).",
         "produces": [
           "application/json"
         ],
@@ -1270,36 +1304,32 @@ func init() {
       }
     },
     "/user/login": {
-      "get": {
+      "post": {
+        "security": [],
         "produces": [
           "application/json"
         ],
         "tags": [
-          "user"
+          "login"
         ],
         "summary": "Logs user into the system",
         "operationId": "loginUser",
         "parameters": [
           {
-            "type": "string",
-            "description": "The user name for login",
-            "name": "username",
-            "in": "query",
-            "required": true
-          },
-          {
-            "type": "string",
-            "description": "The password for login in clear text",
-            "name": "password",
-            "in": "query",
-            "required": true
+            "description": "Created competition object",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginRequest"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": "successful operation",
             "schema": {
-              "type": "string"
+              "$ref": "#/definitions/LoginResponse"
             },
             "headers": {
               "X-Expires-After": {
@@ -1315,7 +1345,16 @@ func init() {
             }
           },
           "400": {
-            "description": "Invalid username/password supplied"
+            "description": "Invalid payload or empty login passed",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
+          },
+          "401": {
+            "description": "Invalid username/password supplied",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
           }
         }
       }
@@ -1326,7 +1365,7 @@ func init() {
           "application/json"
         ],
         "tags": [
-          "user"
+          "login"
         ],
         "summary": "Logs out current logged in user session",
         "operationId": "logoutUser",
@@ -1523,6 +1562,25 @@ func init() {
         }
       }
     },
+    "LoginRequest": {
+      "type": "object",
+      "properties": {
+        "login": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "LoginResponse": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      }
+    },
     "Range": {
       "type": "object",
       "properties": {
@@ -1681,6 +1739,10 @@ func init() {
     }
   ],
   "tags": [
+    {
+      "description": "User authentication - login / logout",
+      "name": "login"
+    },
     {
       "description": "Access to shooting ranges",
       "name": "range"

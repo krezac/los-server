@@ -3,6 +3,14 @@ USE los;
 -- cleanup
 -- note the reverse order becase of keys
 DELETE FROM users;
+
+DELETE FROM hits;
+DELETE FROM hit_type_values;
+DELETE FROM hit_values;
+DELETE FROM hit_types;
+DELETE FROM targets;
+DELETE FROM target_types;
+DELETE FROM situations;
 DELETE FROM competitions;
 DELETE FROM competition_categories;
 DELETE FROM competition_types;
@@ -30,6 +38,45 @@ INSERT INTO competition_types (ID, CODE, NAME) VALUES
 INSERT INTO competitions (ID, NAME, EVENT_DATE, RANGE_ID, CATEGORY_ID, TYPE_ID) VALUES
 	(1, '10 ran a dost 27', '2018-10-27', 1, 1, 1),
 	(2, 'Velka rana', '2018-10-28', 1, 2, 2);
+
+INSERT INTO situations (ID, NUMBER, NAME, COMPETITION_ID) VALUES
+	(1, 1, 'Utek ze zajeti', 1),
+	(2, 2, 'Dostavnik', 1);
+
+INSERT INTO target_types (ID, NAME, SPECIAL_UI) VALUES
+	(1, 'LOS papir 2 rany', "ui_los_2"),
+	(2, 'Popper', "ui_popper");
+
+INSERT INTO targets (ID, NUMBER, NAME, SITUATION_ID, TARGET_TYPE_ID) VALUES
+	(1, 1, 'Terc 1', 1, 1),
+	(2, 2, 'Terc 2', 1, 1),
+	(3, 3, 'Terc 3', 1, 2);
+
+INSERT INTO hit_types (ID, NAME, CUMMULATIVE) VALUES
+	(1, 'Zasah papir', 0),
+	(2, 'Zasah kov', 1);
+
+INSERT INTO hit_values (ID, CODE, NAME, VALUE) VALUES
+	(1, 'A', 'Alpha', 0),
+	(2, 'C', 'Charlie', 1),
+	(3, 'D', 'Delta', 2),
+	(4, 'MT', 'Mis terc', 5),
+	(5, 'NT', 'Neterc', 10),
+	(6, 'PP', 'Popper', 0),
+	(7, 'MP', 'Miss popper', 10),
+	(8, 'Proc', 'Procedura', 3);
+
+INSERT INTO hit_type_values (ID, NUMBER, HIT_TYPE_ID, HIT_VALUE_ID) VALUES
+	(1, 1, 1, 1), -- papir
+	(2, 2, 1, 2),
+	(3, 3, 1, 3),
+	(4, 4, 1, 4),
+	(5, 1, 2, 6), -- popper
+	(6, 2, 2, 7);
+
+INSERT INTO hits (ID, NUMBER, TARGET_TYPE_ID, HIT_TYPE_ID, COUNT) VALUES 
+	(1, 1, 1, 1, 2),
+	(3, 1, 2, 2, 1);
 
 INSERT INTO users (ID, LOGIN, PASSWORD) VALUES
 	(1, 'user1@dev.los', '$2a$10$pF0t.w3y.zrra2tj9j5U1eU9XkVXoze83jRbmJlqJfAqhEeU1SvwK'),

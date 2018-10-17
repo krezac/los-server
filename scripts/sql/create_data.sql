@@ -2,8 +2,11 @@ USE los;
 
 -- cleanup
 -- note the reverse order becase of keys
+DELETE FROM shots;
+DELETE FROM attempts;
+DELETE FROM competitors;
 DELETE FROM users;
-
+DELETE FROM squads;
 DELETE FROM hits;
 DELETE FROM hit_type_values;
 DELETE FROM hit_values;
@@ -78,6 +81,18 @@ INSERT INTO hits (ID, NUMBER, TARGET_TYPE_ID, HIT_TYPE_ID, COUNT) VALUES
 	(1, 1, 1, 1, 2),
 	(3, 1, 2, 2, 1);
 
+INSERT INTO squads(ID, NUMBER, NAME, COMPETITION_ID) VALUES
+	(1, 1, 'Squad 1', 1);
+
 INSERT INTO users (ID, LOGIN, PASSWORD) VALUES
 	(1, 'user1@dev.los', '$2a$10$pF0t.w3y.zrra2tj9j5U1eU9XkVXoze83jRbmJlqJfAqhEeU1SvwK'),
 	(2, 'user2@dev.los', '$2a$10$pF0t.w3y.zrra2tj9j5U1eU9XkVXoze83jRbmJlqJfAqhEeU1SvwK');
+
+INSERT INTO competitors (ID, FIRST_NAME, LAST_NAME, NICKNAME, EMAIL, LICENCE, SQUAD_ID) VALUES
+	(1, 'Karel', 'Ctvrty', 'Bouchac', 'a@b.cz', 'AB12345678', 1);
+
+INSERT INTO attempts (ID, COMPETITOR_ID, SITUATION_ID, TIME, JUDGE_ID) VALUES
+	(1, 1, 1, 12.34, 2);
+
+INSERT INTO shots (ID, ATTEMPT_ID, TARGET_ID, HIT_VALUE_ID, COUNT) VALUES
+	(1, 1, 1, 1, 1);

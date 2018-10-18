@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS los;
 CREATE DATABASE IF NOT EXISTS los;
 USE los;
 
-DROP USER 'los'@localhost;
+DROP USER IF EXISTS 'los'@localhost;
 CREATE USER 'los'@localhost IDENTIFIED BY 'los';
 GRANT ALL PRIVILEGES ON los.* TO 'los'@localhost IDENTIFIED BY 'los';
 FLUSH PRIVILEGES;

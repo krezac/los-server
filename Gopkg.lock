@@ -283,14 +283,6 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:ea0700160aca4ef099f4e06686a665a87691f4248dddd40796925eda2e46bd64"
-  name = "github.com/rakyll/statik"
-  packages = ["fs"]
-  pruneopts = "UT"
-  revision = "1355192d24db2566a83c3914e187e2a7e7679832"
-  version = "v0.1.5"
-
-[[projects]]
   digest = "1:3f53e9e4dfbb664cd62940c9c4b65a2171c66acd0b7621a1a6b8e78513525a52"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
@@ -316,9 +308,13 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:3f3a05ae0b95893d90b9b3b5afdb79a9b3d96e4e36e099d841ae602e4aca0da8"
+  digest = "1:001a4e7a40e50ff2ef32e2556bca50c4f77daa457db3ac6afc8bea9bb2122cfb"
   name = "golang.org/x/crypto"
-  packages = ["ssh/terminal"]
+  packages = [
+    "bcrypt",
+    "blowfish",
+    "ssh/terminal",
+  ]
   pruneopts = "UT"
   revision = "7c1a557ab941a71c619514f229f0b27ccb0c27cf"
 
@@ -411,8 +407,8 @@
     "github.com/go-sql-driver/mysql",
     "github.com/jessevdk/go-flags",
     "github.com/jmoiron/sqlx",
-    "github.com/rakyll/statik/fs",
     "github.com/stretchr/testify/assert",
+    "golang.org/x/crypto/bcrypt",
     "golang.org/x/net/netutil",
     "gopkg.in/DATA-DOG/go-sqlmock.v1",
   ]

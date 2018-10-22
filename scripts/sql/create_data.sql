@@ -27,6 +27,10 @@ INSERT INTO ranges (ID, NAME, LATITUDE, LONGITUDE, URL) VALUES
 	(2, 'SSK Žalany TEST', 50.596953611100, 13.893513333300, 'https://zbranekvalitne.cz/strelnice/zalany'),
 	(3, 'AVIM Praha TEST', 50.091916666700, 14.441044444400, 'https://zbranekvalitne.cz/strelnice/avim-praha');
 
+INSERT INTO ranges (ID, NAME, LATITUDE, LONGITUDE, URL, ACTIVE) VALUES
+	(4, 'Not Active TEST', 50.091916666700, 14.441044444400, 'https://zbranekvalitne.cz/strelnice/avim-praha', 0);
+
+
 INSERT INTO competition_categories (ID, CODE, NAME) VALUES
 	(1, 'P', 'Pohárová'),
 	(2, 'K', 'Klubová'),

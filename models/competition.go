@@ -22,7 +22,7 @@ type Competition struct {
 
 	// date of the competition
 	// Format: date
-	Date strfmt.Date `json:"date,omitempty"`
+	EventDate strfmt.Date `json:"eventDate,omitempty"`
 
 	// id
 	ID int64 `json:"id,omitempty"`
@@ -42,7 +42,7 @@ func (m *Competition) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateDate(formats); err != nil {
+	if err := m.validateEventDate(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -74,13 +74,13 @@ func (m *Competition) validateCategory(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Competition) validateDate(formats strfmt.Registry) error {
+func (m *Competition) validateEventDate(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Date) { // not required
+	if swag.IsZero(m.EventDate) { // not required
 		return nil
 	}
 
-	if err := validate.FormatOf("date", "body", "date", m.Date.String(), formats); err != nil {
+	if err := validate.FormatOf("eventDate", "body", "date", m.EventDate.String(), formats); err != nil {
 		return err
 	}
 

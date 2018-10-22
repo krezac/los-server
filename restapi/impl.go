@@ -9,10 +9,12 @@ import (
 	interpose "github.com/carbocation/interpose/middleware"
 	"github.com/dgrijalva/jwt-go"
 	middleware "github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/strfmt"
 	"github.com/krezac/los-server/auth"
 	"github.com/krezac/los-server/database"
 	"github.com/krezac/los-server/models"
 	"github.com/krezac/los-server/restapi/operations"
+	"github.com/krezac/los-server/restapi/operations/competition"
 	"github.com/krezac/los-server/restapi/operations/login"
 	"github.com/krezac/los-server/restapi/operations/range_operations"
 	"golang.org/x/crypto/bcrypt"
@@ -52,7 +54,7 @@ func loginUser(api *operations.LosAPI, params login.LoginUserParams) middleware.
 		return login.NewLoginUserBadRequest()
 	}
 
-	dbu, err := db.GetUserByLogin(params.Body.Login)
+	dbu, err := db.GetUserByLogin(params.Body.Login, true)
 	if err != nil {
 		// TODO do not dump error in login message
 		resp := models.APIResponse{
@@ -130,7 +132,7 @@ func getRangeByID(api *operations.LosAPI, params range_operations.GetRangeByIDPa
 }
 
 func getRanges(api *operations.LosAPI, params range_operations.GetRangesParams) middleware.Responder {
-	dbRanges, err := db.GetRanges()
+	dbRanges, err := db.GetRanges(*params.ActiveOnly)
 	if err != nil {
 		resp := models.APIResponse{
 			Message: err.Error(),
@@ -147,7 +149,7 @@ func getRanges(api *operations.LosAPI, params range_operations.GetRangesParams) 
 }
 
 func getRangesHTML(api *operations.LosAPI, params range_operations.GetRangesHTMLParams) middleware.Responder {
-	dbRanges, err := db.GetRanges()
+	dbRanges, err := db.GetRanges(*params.ActiveOnly)
 	if err != nil {
 		resp := models.APIResponse{
 			Message: err.Error(),
@@ -167,6 +169,35 @@ func getRangesHTML(api *operations.LosAPI, params range_operations.GetRangesHTML
 	return range_operations.NewGetRangesHTMLOK().WithPayload(&htmlRes)
 }
 
+func getCompetitionByID(api *operations.LosAPI, params competition.GetCompetitionByIDParams) middleware.Responder {
+	dbc, err := db.GetCompetitionByID(params.CompetitionID)
+	if err != nil {
+		resp := models.APIResponse{
+			Message: err.Error(),
+		}
+		return competition.NewGetCompetitionByIDNotFound().WithPayload(&resp)
+	}
+
+	return competition.NewGetCompetitionByIDOK().WithPayload(dbCompetitionToCompetition(dbc))
+}
+
+func getCompetitions(api *operations.LosAPI, params competition.GetCompetitionsParams) middleware.Responder {
+	dbCompetitions, err := db.GetCompetitions(params.RangeID, *params.ActiveOnly)
+	if err != nil {
+		resp := models.APIResponse{
+			Message: err.Error(),
+		}
+		return range_operations.NewGetRangesInternalServerError().WithPayload(&resp)
+	}
+
+	competitions := []*models.Competition{}
+	for _, dbc := range dbCompetitions {
+		competitions = append(competitions, dbCompetitionToCompetition(&dbc))
+	}
+
+	return competition.NewGetCompetitionsOK().WithPayload(competitions)
+}
+
 func dbRangeToRange(dbr *database.Range) *models.Range {
 	return &models.Range{
 		ID:        dbr.ID,
@@ -175,6 +206,26 @@ func dbRangeToRange(dbr *database.Range) *models.Range {
 		Longitude: dbr.Longitude,
 		URL:       dbr.URL,
 		Active:    dbr.Active,
+	}
+}
+
+func dbCompetitionToCompetition(dbc *database.Competition) *models.Competition {
+	return &models.Competition{
+		ID:        dbc.ID,
+		Name:      dbc.Name,
+		EventDate: strfmt.Date(dbc.EventDate),
+		//RangeID:   dbc.RangeID,
+		Category: &models.CompetitionCategory{
+			ID:   dbc.CategoryID,
+			Code: dbc.CategoryCode,
+			Name: dbc.CategoryName,
+		},
+		Type: &models.CompetitionType{
+			ID:   dbc.TypeID,
+			Code: dbc.TypeCode,
+			Name: dbc.TypeName,
+		},
+		//Active: dbc.Active,
 	}
 }
 

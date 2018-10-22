@@ -144,6 +144,12 @@ paths:
         required: true
         type: "integer"
         format: "int64"
+      - name: "activeOnly"
+        in: "query"
+        description: "Return active only ranges"
+        required: false
+        default: true
+        type: "boolean"
       security: []
       responses:
         200:
@@ -528,7 +534,7 @@ definitions:
       name:
         type: "string"
         example: "10 ran a dost"
-      date:
+      eventDate:
         type: "string"
         format: "date"
         description: "date of the competition"

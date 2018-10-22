@@ -18,6 +18,8 @@ import (
 type GetCompetitionsURL struct {
 	RangeID int64
 
+	ActiveOnly *bool
+
 	_basePath string
 	// avoid unkeyed usage
 	_ struct{}
@@ -56,6 +58,18 @@ func (o *GetCompetitionsURL) Build() (*url.URL, error) {
 		_basePath = "/v1"
 	}
 	result.Path = golangswaggerpaths.Join(_basePath, _path)
+
+	qs := make(url.Values)
+
+	var activeOnly string
+	if o.ActiveOnly != nil {
+		activeOnly = swag.FormatBool(*o.ActiveOnly)
+	}
+	if activeOnly != "" {
+		qs.Set("activeOnly", activeOnly)
+	}
+
+	result.RawQuery = qs.Encode()
 
 	return &result, nil
 }

@@ -90,10 +90,10 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 		return middleware.NotImplemented("operation user.DeleteUser has not yet been implemented")
 	})
 	api.CompetitionGetCompetitionByIDHandler = competition.GetCompetitionByIDHandlerFunc(func(params competition.GetCompetitionByIDParams) middleware.Responder {
-		return middleware.NotImplemented("operation competition.GetCompetitionByID has not yet been implemented")
+		return getCompetitionByID(api, params) // IMPL change against generated file
 	})
 	api.CompetitionGetCompetitionsHandler = competition.GetCompetitionsHandlerFunc(func(params competition.GetCompetitionsParams) middleware.Responder {
-		return middleware.NotImplemented("operation competition.GetCompetitions has not yet been implemented")
+		return getCompetitions(api, params) // IMPL change against generated file
 	})
 	api.CompetitionGetCompetitionsHTMLHandler = competition.GetCompetitionsHTMLHandlerFunc(func(params competition.GetCompetitionsHTMLParams) middleware.Responder {
 		return middleware.NotImplemented("operation competition.GetCompetitionsHTML has not yet been implemented")

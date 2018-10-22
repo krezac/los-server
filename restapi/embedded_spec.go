@@ -325,6 +325,13 @@ func init() {
             "name": "rangeId",
             "in": "path",
             "required": true
+          },
+          {
+            "type": "boolean",
+            "default": true,
+            "description": "Return active only ranges",
+            "name": "activeOnly",
+            "in": "query"
           }
         ],
         "responses": {
@@ -609,7 +616,7 @@ func init() {
         "category": {
           "$ref": "#/definitions/CompetitionCategory"
         },
-        "date": {
+        "eventDate": {
           "description": "date of the competition",
           "type": "string",
           "format": "date"
@@ -1215,6 +1222,13 @@ func init() {
             "name": "rangeId",
             "in": "path",
             "required": true
+          },
+          {
+            "type": "boolean",
+            "default": true,
+            "description": "Return active only ranges",
+            "name": "activeOnly",
+            "in": "query"
           }
         ],
         "responses": {
@@ -1499,7 +1513,7 @@ func init() {
         "category": {
           "$ref": "#/definitions/CompetitionCategory"
         },
-        "date": {
+        "eventDate": {
           "description": "date of the competition",
           "type": "string",
           "format": "date"

@@ -10,26 +10,47 @@ import (
 
 var rangesColumns = []string{"ID", "NAME", "LATITUDE", "LONGITUDE", "ACTIVE"}
 
-func TestGetRanges(t *testing.T) {
+func TestGetRangesActive(t *testing.T) {
 	mockDB, mock, err := sqlmock.New()
 	assert.NotNil(t, mockDB, "mock created")
 	assert.NotNil(t, mock, "mock created")
 	assert.NoError(t, err, "mock created")
 
-	mock.ExpectQuery("SELECT \\* FROM ranges ORDER BY name ASC").
+	mock.ExpectQuery("SELECT .* FROM ranges WHERE ACTIVE <> 0 ORDER BY name ASC").
 		WillReturnRows(sqlmock.NewRows(rangesColumns).AddRow(
 			11, "Strelnice 1", 1, 2, 1).AddRow(
-			12, "Strelnice 2", 3, 4, 1).AddRow(
-			13, "Strelnice 3", 5, 6, 1))
+			12, "Strelnice 2", 3, 4, 1))
 
 	db := database.NewDatabase(mockDB, "sqlmock")
 	assert.NotNil(t, mockDB, "database wrapper created")
 
-	ranges, err := db.GetRanges()
+	ranges, err := db.GetRanges(true)
+	assert.Len(t, ranges, 2, "list size")
+	assert.Equal(t, int64(11), ranges[0].ID, "data check")
+	assert.Equal(t, int64(12), ranges[1].ID, "data check")
+}
+
+func TestGetRangesAll(t *testing.T) {
+	mockDB, mock, err := sqlmock.New()
+	assert.NotNil(t, mockDB, "mock created")
+	assert.NotNil(t, mock, "mock created")
+	assert.NoError(t, err, "mock created")
+
+	mock.ExpectQuery("SELECT .* FROM ranges ORDER BY name ASC").
+		WillReturnRows(sqlmock.NewRows(rangesColumns).AddRow(
+			11, "Strelnice 1", 1, 2, 1).AddRow(
+			12, "Strelnice 2", 3, 4, 1).AddRow(
+			13, "Strelnice 3", 5, 6, 0))
+
+	db := database.NewDatabase(mockDB, "sqlmock")
+	assert.NotNil(t, mockDB, "database wrapper created")
+
+	ranges, err := db.GetRanges(false)
 	assert.Len(t, ranges, 3, "list size")
 	assert.Equal(t, int64(11), ranges[0].ID, "data check")
 	assert.Equal(t, int64(12), ranges[1].ID, "data check")
 	assert.Equal(t, int64(13), ranges[2].ID, "data check")
+
 }
 
 /*

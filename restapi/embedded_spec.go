@@ -329,7 +329,7 @@ func init() {
           {
             "type": "boolean",
             "default": true,
-            "description": "Return active only ranges",
+            "description": "Return active only competitions",
             "name": "activeOnly",
             "in": "query"
           }
@@ -358,7 +358,7 @@ func init() {
         "security": [],
         "description": "Returns a list of competitions for shooting range as HTML page",
         "produces": [
-          "application/json"
+          "text/html"
         ],
         "tags": [
           "competition"
@@ -373,6 +373,13 @@ func init() {
             "name": "rangeId",
             "in": "path",
             "required": true
+          },
+          {
+            "type": "boolean",
+            "default": true,
+            "description": "Return active only competitions",
+            "name": "activeOnly",
+            "in": "query"
           }
         ],
         "responses": {
@@ -628,6 +635,9 @@ func init() {
         "name": {
           "type": "string",
           "example": "10 ran a dost"
+        },
+        "range": {
+          "$ref": "#/definitions/Range"
         },
         "type": {
           "$ref": "#/definitions/CompetitionType"
@@ -1226,7 +1236,7 @@ func init() {
           {
             "type": "boolean",
             "default": true,
-            "description": "Return active only ranges",
+            "description": "Return active only competitions",
             "name": "activeOnly",
             "in": "query"
           }
@@ -1255,7 +1265,7 @@ func init() {
         "security": [],
         "description": "Returns a list of competitions for shooting range as HTML page",
         "produces": [
-          "application/json"
+          "text/html"
         ],
         "tags": [
           "competition"
@@ -1270,6 +1280,13 @@ func init() {
             "name": "rangeId",
             "in": "path",
             "required": true
+          },
+          {
+            "type": "boolean",
+            "default": true,
+            "description": "Return active only competitions",
+            "name": "activeOnly",
+            "in": "query"
           }
         ],
         "responses": {
@@ -1525,6 +1542,9 @@ func init() {
         "name": {
           "type": "string",
           "example": "10 ran a dost"
+        },
+        "range": {
+          "$ref": "#/definitions/Range"
         },
         "type": {
           "$ref": "#/definitions/CompetitionType"

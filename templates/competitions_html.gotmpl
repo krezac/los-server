@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="/static/css/table.css">
+</head>
+<body>
+
+<h1>Competitions</h1>
+
+<div class="divTable blueTable">
+<div class="divTableHeading">
+<div class="divTableRow">
+<div class="divTableHead">Event date</div>
+<div class="divTableHead">Name</div>
+<div class="divTableHead">Category</div>
+<div class="divTableHead">Type</div>
+</div>
+</div>
+<div class="divTableBody">
+{{ range . }}
+<div class="divTableRow">
+    <div class="divTableCell">{{ .EventDate }}</div>
+    <div class="divTableCell">{{ .Name }}</div>
+    <div class="divTableCell">{{ .Category.Code }} - {{ .Category.Name }}</div>
+    <div class="divTableCell">{{ .Type.Code }} - {{ .Type.Name }}</div>
+</div>
+{{ end }}
+</div>
+</div>
+
+</body>
+</html>
+

@@ -30,6 +30,9 @@ type Competition struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// range
+	Range *Range `json:"range,omitempty"`
+
 	// type
 	Type *CompetitionType `json:"type,omitempty"`
 }
@@ -43,6 +46,10 @@ func (m *Competition) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateEventDate(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRange(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -82,6 +89,24 @@ func (m *Competition) validateEventDate(formats strfmt.Registry) error {
 
 	if err := validate.FormatOf("eventDate", "body", "date", m.EventDate.String(), formats); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *Competition) validateRange(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Range) { // not required
+		return nil
+	}
+
+	if m.Range != nil {
+		if err := m.Range.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("range")
+			}
+			return err
+		}
 	}
 
 	return nil

@@ -37,4 +37,5 @@ type Competition struct {
 	CategoryName string    `db:"CATEGORY_NAME"`
 	TypeCode     string    `db:"TYPE_CODE"`
 	TypeName     string    `db:"TYPE_NAME"`
+	RangeName    string    `db:"RANGE_NAME"`
 }

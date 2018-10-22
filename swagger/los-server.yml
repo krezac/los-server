@@ -146,7 +146,7 @@ paths:
         format: "int64"
       - name: "activeOnly"
         in: "query"
-        description: "Return active only ranges"
+        description: "Return active only competitions"
         required: false
         default: true
         type: "boolean"
@@ -170,7 +170,7 @@ paths:
       description: "Returns a list of competitions for shooting range as HTML page"
       operationId: "getCompetitionsHtml"
       produces:
-      - "application/json"
+      - "text/html"
       parameters:
       - name: "rangeId"
         in: "path"
@@ -178,6 +178,12 @@ paths:
         required: true
         type: "integer"
         format: "int64"
+      - name: "activeOnly"
+        in: "query"
+        description: "Return active only competitions"
+        required: false
+        default: true
+        type: "boolean"
       security: []
       responses:
         200:
@@ -542,6 +548,8 @@ definitions:
         $ref: "#/definitions/CompetitionCategory"
       type:
         $ref: "#/definitions/CompetitionType"
+      range:
+        $ref: "#/definitions/Range"
   CompetitionCategory:
     type: "object"
     properties:

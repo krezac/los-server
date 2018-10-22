@@ -40,7 +40,7 @@ type GetCompetitionsParams struct {
 	// HTTP Request Object
 	HTTPRequest *http.Request `json:"-"`
 
-	/*Return active only ranges
+	/*Return active only competitions
 	  In: query
 	  Default: true
 	*/

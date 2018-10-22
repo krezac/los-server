@@ -96,7 +96,7 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 		return getCompetitions(api, params) // IMPL change against generated file
 	})
 	api.CompetitionGetCompetitionsHTMLHandler = competition.GetCompetitionsHTMLHandlerFunc(func(params competition.GetCompetitionsHTMLParams) middleware.Responder {
-		return middleware.NotImplemented("operation competition.GetCompetitionsHTML has not yet been implemented")
+		return getCompetitionsHTML(api, params) // IMPL change against generated file
 	})
 	api.RangeOperationsGetRangeByIDHandler = range_operations.GetRangeByIDHandlerFunc(func(params range_operations.GetRangeByIDParams) middleware.Responder {
 		return getRangeByID(api, params) // IMPL change against generated file

@@ -10,8 +10,9 @@ import (
 const (
 	rangesColumns       = "ID, NAME, LATITUDE, LONGITUDE, URL, ACTIVE, CREATED_TS"
 	usersColumns        = "ID, LOGIN, PASSWORD, ACTIVE, CREATED_TS"
-	competitionsColumns = "c.ID, c.NAME, c.EVENT_DATE, c.RANGE_ID, c.CATEGORY_ID, c.TYPE_ID, c.ACTIVE, c.CREATED_TS, cc.CODE as CATEGORY_CODE, cc.NAME as CATEGORY_NAME, ct.CODE as TYPE_CODE, ct.NAME as TYPE_NAME"
-	competitionsFrom    = "competitions c JOIN competition_categories cc ON c.CATEGORY_ID=cc.ID JOIN competition_types ct ON c.TYPE_ID=ct.ID"
+	competitionsColumns = "c.ID, c.NAME, c.EVENT_DATE, c.RANGE_ID, c.CATEGORY_ID, c.TYPE_ID, c.ACTIVE, c.CREATED_TS, cc.CODE as CATEGORY_CODE, cc.NAME as CATEGORY_NAME, ct.CODE as TYPE_CODE, ct.NAME as TYPE_NAME, r.NAME as RANGE_NAME"
+	competitionsFrom    = "competitions c JOIN competition_categories cc ON c.CATEGORY_ID=cc.ID JOIN competition_types ct ON c.TYPE_ID=ct.ID JOIN ranges r on c.RANGE_ID=r.id"
+	competitionsOrderBy = "c.EVENT_DATE, c.NAME ASC"
 )
 
 // Database is wrapper around database connection
@@ -62,7 +63,7 @@ func (db *Database) GetCompetitions(rangeID int64, activeOnly bool) ([]Competiti
 	if activeOnly {
 		query += " AND c.ACTIVE <> 0"
 	}
-	query += " ORDER BY name ASC"
+	query += " ORDER BY " + competitionsOrderBy
 	err := db.db.Select(&competitions, query, rangeID)
 	return competitions, err
 }

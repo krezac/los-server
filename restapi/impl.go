@@ -198,6 +198,27 @@ func getCompetitions(api *operations.LosAPI, params competition.GetCompetitionsP
 	return competition.NewGetCompetitionsOK().WithPayload(competitions)
 }
 
+func getCompetitionsHTML(api *operations.LosAPI, params competition.GetCompetitionsHTMLParams) middleware.Responder {
+	dbCompetitions, err := db.GetCompetitions(params.RangeID, *params.ActiveOnly)
+	if err != nil {
+		resp := models.APIResponse{
+			Message: err.Error(),
+		}
+		return range_operations.NewGetRangesInternalServerError().WithPayload(&resp)
+	}
+
+	competitions := []*models.Competition{}
+	for _, dbc := range dbCompetitions {
+		competitions = append(competitions, dbCompetitionToCompetition(&dbc))
+	}
+
+	htmlRes := models.HTMLResponse{
+		Template: "templates/competitions_html.gotmpl",
+		Payload:  competitions,
+	}
+	return competition.NewGetCompetitionsHTMLOK().WithPayload(&htmlRes)
+}
+
 func dbRangeToRange(dbr *database.Range) *models.Range {
 	return &models.Range{
 		ID:        dbr.ID,
@@ -224,6 +245,10 @@ func dbCompetitionToCompetition(dbc *database.Competition) *models.Competition {
 			ID:   dbc.TypeID,
 			Code: dbc.TypeCode,
 			Name: dbc.TypeName,
+		},
+		Range: &models.Range{
+			ID:   dbc.RangeID,
+			Name: dbc.RangeName,
 		},
 		//Active: dbc.Active,
 	}

@@ -43,7 +43,7 @@ INSERT INTO competition_types (ID, CODE, NAME) VALUES
 	(3, 'Br', 'Brokovnice');
 
 INSERT INTO competitions (ID, NAME, EVENT_DATE, RANGE_ID, CATEGORY_ID, TYPE_ID) VALUES
-	(1, '10 ran a dost 27', '2018-10-27', 1, 1, 1),
+	(1, '10 ran a dost 29', '2018-10-29', 1, 1, 1),
 	(2, 'Velka rana', '2018-10-28', 1, 2, 2);
 
 INSERT INTO situations (ID, NUMBER, NAME, COMPETITION_ID) VALUES

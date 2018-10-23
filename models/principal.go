@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"github.com/go-openapi/errors"
 	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // Principal principal
@@ -18,12 +19,41 @@ type Principal struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// raw token
+	RawToken string `json:"rawToken,omitempty"`
+
 	// roles
 	Roles []string `json:"roles"`
+
+	// valid to
+	// Format: datetime
+	ValidTo strfmt.DateTime `json:"validTo,omitempty"`
 }
 
 // Validate validates this principal
 func (m *Principal) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateValidTo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Principal) validateValidTo(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ValidTo) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("validTo", "body", "datetime", m.ValidTo.String(), formats); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -4,9 +4,11 @@ import (
 	"crypto/rsa"
 	"fmt"
 	"io/ioutil"
+	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	errors "github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	models "github.com/krezac/los-server/models"
 )
 
@@ -18,7 +20,7 @@ type JwtExtraOptions struct {
 
 var JwtExtraOptionsVar = &JwtExtraOptions{}
 
-// code form github.com/go-swagger/go-swagger/examples/composed-auth/auth/authorizers.go
+// code from github.com/go-swagger/go-swagger/examples/composed-auth/auth/authorizers.go
 
 var (
 	// Keys used to sign and verify our tokens
@@ -54,8 +56,10 @@ func HasRole(token string, scopes []string) (*models.Principal, error) {
 			}
 			if isInScopes {
 				return &models.Principal{
-					Name:  claims.Id,
-					Roles: claimedRoles,
+					Name:     claims.Id,
+					Roles:    claimedRoles,
+					RawToken: token,
+					ValidTo:  strfmt.DateTime(time.Unix(claims.ExpiresAt, 0)),
 				}, nil
 			}
 			return nil, errors.New(403, "Forbidden: insufficient privileges")

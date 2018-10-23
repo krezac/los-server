@@ -10,7 +10,6 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
-
 	strfmt "github.com/go-openapi/strfmt"
 )
 

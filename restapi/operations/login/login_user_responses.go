@@ -11,7 +11,6 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
 	models "github.com/krezac/los-server/models"
 )
 
@@ -103,54 +102,10 @@ func (o *LoginUserOK) WriteResponse(rw http.ResponseWriter, producer runtime.Pro
 	}
 }
 
-// LoginUserBadRequestCode is the HTTP code returned for type LoginUserBadRequest
-const LoginUserBadRequestCode int = 400
-
-/*LoginUserBadRequest Invalid payload or empty login passed
-
-swagger:response loginUserBadRequest
-*/
-type LoginUserBadRequest struct {
-
-	/*
-	  In: Body
-	*/
-	Payload *models.APIResponse `json:"body,omitempty"`
-}
-
-// NewLoginUserBadRequest creates LoginUserBadRequest with default headers values
-func NewLoginUserBadRequest() *LoginUserBadRequest {
-
-	return &LoginUserBadRequest{}
-}
-
-// WithPayload adds the payload to the login user bad request response
-func (o *LoginUserBadRequest) WithPayload(payload *models.APIResponse) *LoginUserBadRequest {
-	o.Payload = payload
-	return o
-}
-
-// SetPayload sets the payload to the login user bad request response
-func (o *LoginUserBadRequest) SetPayload(payload *models.APIResponse) {
-	o.Payload = payload
-}
-
-// WriteResponse to the client
-func (o *LoginUserBadRequest) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
-
-	rw.WriteHeader(400)
-	if o.Payload != nil {
-		payload := o.Payload
-		if err := producer.Produce(rw, payload); err != nil {
-			panic(err) // let the recovery middleware deal with this
-		}
-	}
-}
-
 // LoginUserUnauthorizedCode is the HTTP code returned for type LoginUserUnauthorized
 const LoginUserUnauthorizedCode int = 401
 
-/*LoginUserUnauthorized Invalid username/password supplied
+/*LoginUserUnauthorized Invalid (or nonexisting) credentials supplied
 
 swagger:response loginUserUnauthorized
 */

@@ -9,14 +9,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/krezac/los-server/database"
-
 	errors "github.com/go-openapi/errors"
 	runtime "github.com/go-openapi/runtime"
 	middleware "github.com/go-openapi/runtime/middleware"
 	swag "github.com/go-openapi/swag"
-
 	"github.com/krezac/los-server/auth"
+	"github.com/krezac/los-server/database"
 	"github.com/krezac/los-server/models"
 	"github.com/krezac/los-server/restapi/operations"
 	"github.com/krezac/los-server/restapi/operations/competition"
@@ -115,6 +113,9 @@ func configureAPI(api *operations.LosAPI) http.Handler {
 	})
 	api.LoginLogoutUserHandler = login.LogoutUserHandlerFunc(func(params login.LogoutUserParams, principal *models.Principal) middleware.Responder {
 		return logoutUser(api, params, principal) // IMPL change against generated file
+	})
+	api.LoginRefreshTokenHandler = login.RefreshTokenHandlerFunc(func(params login.RefreshTokenParams, principal *models.Principal) middleware.Responder {
+		return refreshToken(api, params, principal) // IMPL change against generated file
 	})
 	api.CompetitionUpdateCompetitonHandler = competition.UpdateCompetitonHandlerFunc(func(params competition.UpdateCompetitonParams, principal *models.Principal) middleware.Responder {
 		return middleware.NotImplemented("operation competition.UpdateCompetiton has not yet been implemented")

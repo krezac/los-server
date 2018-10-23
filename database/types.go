@@ -17,11 +17,22 @@ type Range struct {
 
 // User represents records in users table
 type User struct {
-	ID       int64     `db:"ID"`
-	Login    string    `db:"LOGIN"`
-	Password string    `db:"PASSWORD"`
-	Active   bool      `db:"ACTIVE"`
-	Created  time.Time `db:"CREATED_TS"`
+	ID             int64     `db:"ID"`
+	Login          string    `db:"LOGIN"`
+	Password       string    `db:"PASSWORD"`
+	RoleCompetitor bool      `db:"ROLE_COMPETITOR"`
+	RoleJudge      bool      `db:"ROLE_JUDGE"`
+	RoleDirector   bool      `db:"ROLE_DIRECTOR"`
+	RoleAdmin      bool      `db:"ROLE_ADMIN"`
+	Active         bool      `db:"ACTIVE"`
+	Created        time.Time `db:"CREATED_TS"`
+}
+
+type InvalidToken struct {
+	ID      int64     `db:"ID"`
+	UserId  string    `db:"USER_ID"`
+	Token   string    `db:"TOKEN"`
+	ValidTo time.Time `db:"VALID_TO"`
 }
 
 type Competition struct {

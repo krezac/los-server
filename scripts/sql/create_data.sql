@@ -88,9 +88,11 @@ INSERT INTO hits (ID, NUMBER, TARGET_TYPE_ID, HIT_TYPE_ID, COUNT) VALUES
 INSERT INTO squads(ID, NUMBER, NAME, COMPETITION_ID) VALUES
 	(1, 1, 'Squad 1', 1);
 
-INSERT INTO users (ID, LOGIN, PASSWORD) VALUES
-	(1, 'user1@dev.los', '$2a$10$pF0t.w3y.zrra2tj9j5U1eU9XkVXoze83jRbmJlqJfAqhEeU1SvwK'),
-	(2, 'user2@dev.los', '$2a$10$pF0t.w3y.zrra2tj9j5U1eU9XkVXoze83jRbmJlqJfAqhEeU1SvwK');
+INSERT INTO users (ID, LOGIN, PASSWORD, ROLE_COMPETITOR, ROLE_JUDGE, ROLE_DIRECTOR, ROLE_ADMIN) VALUES
+	(1, 'admin1@dev.los', '$2a$10$pF0t.w3y.zrra2tj9j5U1eU9XkVXoze83jRbmJlqJfAqhEeU1SvwK', 1, 1, 1, 1),
+	(2, 'director1@dev.los', '$2a$10$pF0t.w3y.zrra2tj9j5U1eU9XkVXoze83jRbmJlqJfAqhEeU1SvwK', 1, 1, 1, 0),
+	(3, 'judge1@dev.los', '$2a$10$pF0t.w3y.zrra2tj9j5U1eU9XkVXoze83jRbmJlqJfAqhEeU1SvwK', 1, 1, 0, 0),
+	(4, 'user1@dev.los', '$2a$10$pF0t.w3y.zrra2tj9j5U1eU9XkVXoze83jRbmJlqJfAqhEeU1SvwK', 1, 0, 0, 0);
 
 INSERT INTO competitors (ID, FIRST_NAME, LAST_NAME, NICKNAME, EMAIL, LICENCE, SQUAD_ID) VALUES
 	(1, 'Karel', 'Ctvrty', 'Bouchac', 'a@b.cz', 'AB12345678', 1);

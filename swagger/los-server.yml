@@ -31,15 +31,6 @@ tags:
   description: "Access to targets"
 - name: "user"
   description: "Access to users"
-- name: "pet"
-  description: "Everything about your Pets"
-  externalDocs:
-    description: "Find out more"
-    url: "http://swagger.io"
-- name: "store"
-  description: "Access to Petstore orders"
-- name: "user"
-  description: "Operations about user"
 schemes:
 - "http"
 - "https"
@@ -343,12 +334,41 @@ paths:
               type: "string"
               format: "date-time"
               description: "date in UTC when token expires"
-        400:
-          description: "Invalid payload or empty login passed"
+        401:
+          description: "Invalid (or nonexisting) credentials supplied"
           schema:
             $ref: "#/definitions/ApiResponse"
+  /user/refreshtoken:
+    get:
+      tags:
+      - "login"
+      summary: "Refreshes user token"
+      description: ""
+      operationId: "refreshToken"
+      produces:
+      - "application/json"
+      security:
+      - los_auth: ["user"]
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+          headers:
+            X-Rate-Limit:
+              type: "integer"
+              format: "int32"
+              description: "calls per hour allowed by the user"
+            X-Expires-After:
+              type: "string"
+              format: "date-time"
+              description: "date in UTC when token expires"
         401:
-          description: "Invalid username/password supplied"
+          description: "Invalid token provided"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        500:
+          description: "Invalidating of old token failed"
           schema:
             $ref: "#/definitions/ApiResponse"
   /user/logout:
@@ -361,9 +381,16 @@ paths:
       produces:
       - "application/json"
       parameters: []
+      security:
+      - los_auth: ["user"]
       responses:
-        default:
+        200:
           description: "successful operation"
+        401:
+          description: "Invalid token provided"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+
   /user/{username}:
     get:
       tags:
@@ -440,7 +467,7 @@ securityDefinitions:
     tokenUrl: 'https://dumy.oauth.net/token'
     flow: accessCode
     scopes:
-      registered: view publically available info (i.e. dashboards)
+      user: requires to be logged in (having token)
       competitor: view personal details during competition
       judge: enter new results, move people
       director: manages the competition
@@ -457,6 +484,11 @@ definitions:
         type: array 
         items: 
           type: string
+      rawToken: 
+        type: string
+      validTo: 
+        type: string
+        format: "datetime"
   User:
     type: "object"
     properties:
@@ -508,6 +540,11 @@ definitions:
     properties:
       token:
         type: "string"
+        description: "JWT token to be used in subsequent calls"
+      validTo:
+        type: "string"
+        format: "datetime"
+        description: "date to which the token is valid"
   Range:
     type: "object"
     properties:

@@ -6,21 +6,48 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"github.com/go-openapi/errors"
 	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // LoginResponse login response
 // swagger:model LoginResponse
 type LoginResponse struct {
 
-	// token
+	// JWT token to be used in subsequent calls
 	Token string `json:"token,omitempty"`
+
+	// date to which the token is valid
+	// Format: datetime
+	ValidTo strfmt.DateTime `json:"validTo,omitempty"`
 }
 
 // Validate validates this login response
 func (m *LoginResponse) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateValidTo(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *LoginResponse) validateValidTo(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ValidTo) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("validTo", "body", "datetime", m.ValidTo.String(), formats); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -9,10 +10,11 @@ import (
 
 const (
 	rangesColumns       = "ID, NAME, LATITUDE, LONGITUDE, URL, ACTIVE, CREATED_TS"
-	usersColumns        = "ID, LOGIN, PASSWORD, ACTIVE, CREATED_TS"
 	competitionsColumns = "c.ID, c.NAME, c.EVENT_DATE, c.RANGE_ID, c.CATEGORY_ID, c.TYPE_ID, c.ACTIVE, c.CREATED_TS, cc.CODE as CATEGORY_CODE, cc.NAME as CATEGORY_NAME, ct.CODE as TYPE_CODE, ct.NAME as TYPE_NAME, r.NAME as RANGE_NAME"
 	competitionsFrom    = "competitions c JOIN competition_categories cc ON c.CATEGORY_ID=cc.ID JOIN competition_types ct ON c.TYPE_ID=ct.ID JOIN ranges r on c.RANGE_ID=r.id"
 	competitionsOrderBy = "c.EVENT_DATE, c.NAME ASC"
+	usersColumns        = "ID, LOGIN, PASSWORD, ROLE_COMPETITOR, ROLE_JUDGE, ROLE_DIRECTOR, ROLE_ADMIN, ACTIVE, CREATED_TS"
+	invalidTokenColumns = "ID, USER_ID, TOKEN, VALID_TO"
 )
 
 // Database is wrapper around database connection
@@ -98,4 +100,24 @@ func (db *Database) GetUserByLogin(login string, activeOly bool) (*User, error) 
 		return nil, err
 	}
 	return &u, nil
+}
+
+func (db *Database) InvalidateToken(login, token string, validTo time.Time) error {
+	user, err := db.GetUserByLogin(login, true)
+	if err != nil {
+		return err
+	}
+	_, err = db.db.Exec("INSERT INTO invalid_tokens(USER_ID, TOKEN, VALID_TO) VALUES (?, ?, ?)", user.ID, token, validTo)
+	return err
+}
+
+func (db *Database) IsTokenInvalid(login, token string) bool {
+	user, err := db.GetUserByLogin(login, true)
+	if err != nil {
+		return true // user not found, so invalid
+	}
+
+	it := InvalidToken{}
+	err = db.db.Get(&it, "SELECT "+invalidTokenColumns+" FROM invalid_tokens where USER_ID=? AND TOKEN=? LIMIT 1", user.ID, token)
+	return err == nil // means the read succeeded
 }

@@ -1,6 +1,7 @@
 package restapi
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -45,78 +46,125 @@ func (c *hash) Compare(hash string, s string) error {
 }
 
 func losAuthImpl(api *operations.LosAPI, token string, scopes []string) (*models.Principal, error) {
-	api.Logger("HasRoleAuth handler called")
-	return auth.HasRole(token, scopes)
+	api.Logger("losAuthImpl")
+	principal, err := auth.HasRole(token, scopes)
+	if principal != nil {
+		api.Logger("have principal", principal.Name)
+		if db.IsTokenInvalid(principal.Name, principal.RawToken) {
+			return nil, fmt.Errorf("invalid token")
+		}
+	}
+	return principal, err
 }
 
-func loginUser(api *operations.LosAPI, params login.LoginUserParams) middleware.Responder {
-	if params.Body == nil || params.Body.Login == "" {
-		return login.NewLoginUserBadRequest()
-	}
-
-	dbu, err := db.GetUserByLogin(params.Body.Login, true)
+func generateToken(login, password string, isLogin bool) (*models.LoginResponse, error) {
+	dbu, err := db.GetUserByLogin(login, true)
 	if err != nil {
-		// TODO do not dump error in login message
-		resp := models.APIResponse{
-			Message: err.Error(),
-		}
-		return login.NewLoginUserUnauthorized().WithPayload(&resp)
+		return nil, err
 	}
 
-	h := hash{}
-	if err := h.Compare(dbu.Password, params.Body.Password); err != nil {
-		// TODO do not dump error in login message
-		resp := models.APIResponse{
-			Message: err.Error(),
+	if isLogin { // you don't have password for refresh
+		h := hash{}
+		if err := h.Compare(dbu.Password, password); err != nil {
+			return nil, err
 		}
-		return login.NewLoginUserUnauthorized().WithPayload(&resp)
 	}
 
 	// user authenticated, let's generate the token
+	expirationTime := time.Now().Add(time.Hour * 24 * 365) // TODO adjust the expiration
+	roles := []string{"user"}                              // every logged-in user has this permission
+	if dbu.RoleCompetitor {
+		roles = append(roles, "competitor")
+	}
+	if dbu.RoleJudge {
+		roles = append(roles, "judge")
+	}
+	if dbu.RoleDirector {
+		roles = append(roles, "director")
+	}
+	if dbu.RoleAdmin {
+		roles = append(roles, "admin")
+	}
 	token := jwt.NewWithClaims(jwt.SigningMethodRS512, jwt.MapClaims{
-		"jti":   params.Body.Login,
+		"jti":   login,
 		"iss":   auth.JwtExtraOptionsVar.JwtIssuerName,
-		"exp":   time.Now().Add(time.Hour * 24 * 365).Unix(),
-		"roles": []string{"admin"},
+		"exp":   expirationTime.Unix(),
+		"roles": roles,
 	})
 
 	signBytes, err := ioutil.ReadFile(auth.JwtExtraOptionsVar.JwtSigningKey)
 	if err != nil {
-		// TODO do not dump error in login message
-		resp := models.APIResponse{
-			Message: err.Error(),
-		}
-		return login.NewLoginUserUnauthorized().WithPayload(&resp)
+		return nil, err
 	}
 
 	signKey, err := jwt.ParseRSAPrivateKeyFromPEM(signBytes)
 	if err != nil {
-		// TODO do not dump error in login message
-		resp := models.APIResponse{
-			Message: err.Error(),
-		}
-		return login.NewLoginUserUnauthorized().WithPayload(&resp)
+		return nil, err
 	}
 
 	t, err := token.SignedString(signKey)
 
 	if err != nil {
-		// TODO do not dump error in login message
+		return nil, err
+	}
+
+	resp := models.LoginResponse{
+		Token:   t,
+		ValidTo: strfmt.DateTime(expirationTime),
+	}
+
+	return &resp, nil
+}
+
+func loginUser(api *operations.LosAPI, params login.LoginUserParams) middleware.Responder {
+	if params.Body == nil || params.Body.Login == "" {
+		return login.NewLoginUserUnauthorized()
+	}
+
+	resp, err := generateToken(params.Body.Login, params.Body.Password, true)
+	if err != nil {
 		resp := models.APIResponse{
-			Message: "signedString:" + err.Error(),
+			Message: err.Error(), // TODO remove from final version (we don't want to disclose what failed)
 		}
 		return login.NewLoginUserUnauthorized().WithPayload(&resp)
 	}
 
-	resp := models.LoginResponse{
-		Token: t,
-	}
-
-	return login.NewLoginUserOK().WithPayload(&resp)
+	return login.NewLoginUserOK().WithPayload(resp)
 }
 
 func logoutUser(api *operations.LosAPI, params login.LogoutUserParams, principal *models.Principal) middleware.Responder {
-	return login.NewLogoutUserDefault(200)
+	err := db.InvalidateToken(principal.Name, principal.RawToken, time.Time(principal.ValidTo))
+	api.Logger("InvalidateToken", err)
+	if err != nil {
+		resp := models.APIResponse{
+			Message: err.Error(), // TODO remove from final version (we don't want to disclose what failed)
+		}
+		return login.NewLogoutUserUnauthorized().WithPayload(&resp)
+	}
+
+	return login.NewLogoutUserOK()
+}
+
+func refreshToken(api *operations.LosAPI, params login.RefreshTokenParams, principal *models.Principal) middleware.Responder {
+	// generate new
+	resp, err := generateToken(principal.Name, "", false) // no password here
+
+	if err != nil {
+		resp := models.APIResponse{
+			Message: err.Error(), // TODO remove from final version (we don't want to disclose what failed)
+		}
+		return login.NewRefreshTokenUnauthorized().WithPayload(&resp)
+	}
+
+	err = db.InvalidateToken(principal.Name, principal.RawToken, time.Time(principal.ValidTo))
+	if err != nil {
+		resp := models.APIResponse{
+			Message: err.Error(), // TODO remove from final version (we don't want to disclose what failed)
+		}
+		return login.NewRefreshTokenUnauthorized().WithPayload(&resp)
+	}
+
+	return login.NewRefreshTokenOK().WithPayload(resp)
 }
 
 func getRangeByID(api *operations.LosAPI, params range_operations.GetRangeByIDParams) middleware.Responder {

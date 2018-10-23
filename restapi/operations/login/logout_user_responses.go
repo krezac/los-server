@@ -9,42 +9,73 @@ import (
 	"net/http"
 
 	"github.com/go-openapi/runtime"
+	models "github.com/krezac/los-server/models"
 )
 
-/*LogoutUserDefault successful operation
+// LogoutUserOKCode is the HTTP code returned for type LogoutUserOK
+const LogoutUserOKCode int = 200
 
-swagger:response logoutUserDefault
+/*LogoutUserOK successful operation
+
+swagger:response logoutUserOK
 */
-type LogoutUserDefault struct {
-	_statusCode int
+type LogoutUserOK struct {
 }
 
-// NewLogoutUserDefault creates LogoutUserDefault with default headers values
-func NewLogoutUserDefault(code int) *LogoutUserDefault {
-	if code <= 0 {
-		code = 500
-	}
+// NewLogoutUserOK creates LogoutUserOK with default headers values
+func NewLogoutUserOK() *LogoutUserOK {
 
-	return &LogoutUserDefault{
-		_statusCode: code,
-	}
-}
-
-// WithStatusCode adds the status to the logout user default response
-func (o *LogoutUserDefault) WithStatusCode(code int) *LogoutUserDefault {
-	o._statusCode = code
-	return o
-}
-
-// SetStatusCode sets the status to the logout user default response
-func (o *LogoutUserDefault) SetStatusCode(code int) {
-	o._statusCode = code
+	return &LogoutUserOK{}
 }
 
 // WriteResponse to the client
-func (o *LogoutUserDefault) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *LogoutUserOK) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
 
-	rw.WriteHeader(o._statusCode)
+	rw.WriteHeader(200)
+}
+
+// LogoutUserUnauthorizedCode is the HTTP code returned for type LogoutUserUnauthorized
+const LogoutUserUnauthorizedCode int = 401
+
+/*LogoutUserUnauthorized Invalid token provided
+
+swagger:response logoutUserUnauthorized
+*/
+type LogoutUserUnauthorized struct {
+
+	/*
+	  In: Body
+	*/
+	Payload *models.APIResponse `json:"body,omitempty"`
+}
+
+// NewLogoutUserUnauthorized creates LogoutUserUnauthorized with default headers values
+func NewLogoutUserUnauthorized() *LogoutUserUnauthorized {
+
+	return &LogoutUserUnauthorized{}
+}
+
+// WithPayload adds the payload to the logout user unauthorized response
+func (o *LogoutUserUnauthorized) WithPayload(payload *models.APIResponse) *LogoutUserUnauthorized {
+	o.Payload = payload
+	return o
+}
+
+// SetPayload sets the payload to the logout user unauthorized response
+func (o *LogoutUserUnauthorized) SetPayload(payload *models.APIResponse) {
+	o.Payload = payload
+}
+
+// WriteResponse to the client
+func (o *LogoutUserUnauthorized) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.WriteHeader(401)
+	if o.Payload != nil {
+		payload := o.Payload
+		if err := producer.Produce(rw, payload); err != nil {
+			panic(err) // let the recovery middleware deal with this
+		}
+	}
 }

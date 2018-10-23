@@ -468,14 +468,8 @@ func init() {
               }
             }
           },
-          "400": {
-            "description": "Invalid payload or empty login passed",
-            "schema": {
-              "$ref": "#/definitions/ApiResponse"
-            }
-          },
           "401": {
-            "description": "Invalid username/password supplied",
+            "description": "Invalid (or nonexisting) credentials supplied",
             "schema": {
               "$ref": "#/definitions/ApiResponse"
             }
@@ -485,6 +479,13 @@ func init() {
     },
     "/user/logout": {
       "get": {
+        "security": [
+          {
+            "los_auth": [
+              "user"
+            ]
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -494,8 +495,65 @@ func init() {
         "summary": "Logs out current logged in user session",
         "operationId": "logoutUser",
         "responses": {
-          "default": {
+          "200": {
             "description": "successful operation"
+          },
+          "401": {
+            "description": "Invalid token provided",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
+          }
+        }
+      }
+    },
+    "/user/refreshtoken": {
+      "get": {
+        "security": [
+          {
+            "los_auth": [
+              "user"
+            ]
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "login"
+        ],
+        "summary": "Refreshes user token",
+        "operationId": "refreshToken",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/LoginResponse"
+            },
+            "headers": {
+              "X-Expires-After": {
+                "type": "string",
+                "format": "date-time",
+                "description": "date in UTC when token expires"
+              },
+              "X-Rate-Limit": {
+                "type": "integer",
+                "format": "int32",
+                "description": "calls per hour allowed by the user"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token provided",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
+          },
+          "500": {
+            "description": "Invalidating of old token failed",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
           }
         }
       }
@@ -704,7 +762,13 @@ func init() {
       "type": "object",
       "properties": {
         "token": {
+          "description": "JWT token to be used in subsequent calls",
           "type": "string"
+        },
+        "validTo": {
+          "description": "date to which the token is valid",
+          "type": "string",
+          "format": "datetime"
         }
       }
     },
@@ -834,11 +898,18 @@ func init() {
         "name": {
           "type": "string"
         },
+        "rawToken": {
+          "type": "string"
+        },
         "roles": {
           "type": "array",
           "items": {
             "type": "string"
           }
+        },
+        "validTo": {
+          "type": "string",
+          "format": "datetime"
         }
       }
     }
@@ -854,7 +925,7 @@ func init() {
         "competitor": "view personal details during competition",
         "director": "manages the competition",
         "judge": "enter new results, move people",
-        "registered": "view publically available info (i.e. dashboards)"
+        "user": "requires to be logged in (having token)"
       }
     }
   },
@@ -900,22 +971,6 @@ func init() {
     },
     {
       "description": "Access to users",
-      "name": "user"
-    },
-    {
-      "description": "Everything about your Pets",
-      "name": "pet",
-      "externalDocs": {
-        "description": "Find out more",
-        "url": "http://swagger.io"
-      }
-    },
-    {
-      "description": "Access to Petstore orders",
-      "name": "store"
-    },
-    {
-      "description": "Operations about user",
       "name": "user"
     }
   ],
@@ -1375,14 +1430,8 @@ func init() {
               }
             }
           },
-          "400": {
-            "description": "Invalid payload or empty login passed",
-            "schema": {
-              "$ref": "#/definitions/ApiResponse"
-            }
-          },
           "401": {
-            "description": "Invalid username/password supplied",
+            "description": "Invalid (or nonexisting) credentials supplied",
             "schema": {
               "$ref": "#/definitions/ApiResponse"
             }
@@ -1392,6 +1441,13 @@ func init() {
     },
     "/user/logout": {
       "get": {
+        "security": [
+          {
+            "los_auth": [
+              "user"
+            ]
+          }
+        ],
         "produces": [
           "application/json"
         ],
@@ -1401,8 +1457,65 @@ func init() {
         "summary": "Logs out current logged in user session",
         "operationId": "logoutUser",
         "responses": {
-          "default": {
+          "200": {
             "description": "successful operation"
+          },
+          "401": {
+            "description": "Invalid token provided",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
+          }
+        }
+      }
+    },
+    "/user/refreshtoken": {
+      "get": {
+        "security": [
+          {
+            "los_auth": [
+              "user"
+            ]
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "login"
+        ],
+        "summary": "Refreshes user token",
+        "operationId": "refreshToken",
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/LoginResponse"
+            },
+            "headers": {
+              "X-Expires-After": {
+                "type": "string",
+                "format": "date-time",
+                "description": "date in UTC when token expires"
+              },
+              "X-Rate-Limit": {
+                "type": "integer",
+                "format": "int32",
+                "description": "calls per hour allowed by the user"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid token provided",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
+          },
+          "500": {
+            "description": "Invalidating of old token failed",
+            "schema": {
+              "$ref": "#/definitions/ApiResponse"
+            }
           }
         }
       }
@@ -1611,7 +1724,13 @@ func init() {
       "type": "object",
       "properties": {
         "token": {
+          "description": "JWT token to be used in subsequent calls",
           "type": "string"
+        },
+        "validTo": {
+          "description": "date to which the token is valid",
+          "type": "string",
+          "format": "datetime"
         }
       }
     },
@@ -1741,11 +1860,18 @@ func init() {
         "name": {
           "type": "string"
         },
+        "rawToken": {
+          "type": "string"
+        },
         "roles": {
           "type": "array",
           "items": {
             "type": "string"
           }
+        },
+        "validTo": {
+          "type": "string",
+          "format": "datetime"
         }
       }
     }
@@ -1761,7 +1887,7 @@ func init() {
         "competitor": "view personal details during competition",
         "director": "manages the competition",
         "judge": "enter new results, move people",
-        "registered": "view publically available info (i.e. dashboards)"
+        "user": "requires to be logged in (having token)"
       }
     }
   },
@@ -1807,22 +1933,6 @@ func init() {
     },
     {
       "description": "Access to users",
-      "name": "user"
-    },
-    {
-      "description": "Everything about your Pets",
-      "name": "pet",
-      "externalDocs": {
-        "description": "Find out more",
-        "url": "http://swagger.io"
-      }
-    },
-    {
-      "description": "Access to Petstore orders",
-      "name": "store"
-    },
-    {
-      "description": "Operations about user",
       "name": "user"
     }
   ],

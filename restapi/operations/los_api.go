@@ -19,13 +19,11 @@ import (
 	spec "github.com/go-openapi/spec"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
+	models "github.com/krezac/los-server/models"
 	"github.com/krezac/los-server/restapi/operations/competition"
 	"github.com/krezac/los-server/restapi/operations/login"
 	"github.com/krezac/los-server/restapi/operations/range_operations"
 	"github.com/krezac/los-server/restapi/operations/user"
-
-	models "github.com/krezac/los-server/models"
 )
 
 // NewLosAPI creates a new Los instance
@@ -86,6 +84,9 @@ func NewLosAPI(spec *loads.Document) *LosAPI {
 		}),
 		LoginLogoutUserHandler: login.LogoutUserHandlerFunc(func(params login.LogoutUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation LoginLogoutUser has not yet been implemented")
+		}),
+		LoginRefreshTokenHandler: login.RefreshTokenHandlerFunc(func(params login.RefreshTokenParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation LoginRefreshToken has not yet been implemented")
 		}),
 		CompetitionUpdateCompetitonHandler: competition.UpdateCompetitonHandlerFunc(func(params competition.UpdateCompetitonParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation CompetitionUpdateCompetiton has not yet been implemented")
@@ -166,6 +167,8 @@ type LosAPI struct {
 	LoginLoginUserHandler login.LoginUserHandler
 	// LoginLogoutUserHandler sets the operation handler for the logout user operation
 	LoginLogoutUserHandler login.LogoutUserHandler
+	// LoginRefreshTokenHandler sets the operation handler for the refresh token operation
+	LoginRefreshTokenHandler login.RefreshTokenHandler
 	// CompetitionUpdateCompetitonHandler sets the operation handler for the update competiton operation
 	CompetitionUpdateCompetitonHandler competition.UpdateCompetitonHandler
 	// UserUpdateUserHandler sets the operation handler for the update user operation
@@ -291,6 +294,10 @@ func (o *LosAPI) Validate() error {
 
 	if o.LoginLogoutUserHandler == nil {
 		unregistered = append(unregistered, "login.LogoutUserHandler")
+	}
+
+	if o.LoginRefreshTokenHandler == nil {
+		unregistered = append(unregistered, "login.RefreshTokenHandler")
 	}
 
 	if o.CompetitionUpdateCompetitonHandler == nil {
@@ -478,6 +485,11 @@ func (o *LosAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/user/logout"] = login.NewLogoutUser(o.context, o.LoginLogoutUserHandler)
+
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/user/refreshtoken"] = login.NewRefreshToken(o.context, o.LoginRefreshTokenHandler)
 
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)

@@ -86,7 +86,9 @@ INSERT INTO hits (ID, NUMBER, TARGET_TYPE_ID, HIT_TYPE_ID, COUNT) VALUES
 	(3, 1, 2, 2, 1);
 
 INSERT INTO squads(ID, NUMBER, NAME, COMPETITION_ID) VALUES
-	(1, 1, 'Squad 1', 1);
+	(1, 1, 'Squad 1', 1),
+	(2, 2, 'Squad 2', 1),
+	(3, 3, 'Squad 3', 1);
 
 INSERT INTO users (ID, LOGIN, PASSWORD, ROLE_COMPETITOR, ROLE_JUDGE, ROLE_DIRECTOR, ROLE_ADMIN) VALUES
 	(1, 'admin1@dev.los', '$2a$10$pF0t.w3y.zrra2tj9j5U1eU9XkVXoze83jRbmJlqJfAqhEeU1SvwK', 1, 1, 1, 1),
@@ -95,7 +97,36 @@ INSERT INTO users (ID, LOGIN, PASSWORD, ROLE_COMPETITOR, ROLE_JUDGE, ROLE_DIRECT
 	(4, 'user1@dev.los', '$2a$10$pF0t.w3y.zrra2tj9j5U1eU9XkVXoze83jRbmJlqJfAqhEeU1SvwK', 1, 0, 0, 0);
 
 INSERT INTO competitors (ID, FIRST_NAME, LAST_NAME, NICKNAME, EMAIL, LICENCE, SQUAD_ID) VALUES
-	(1, 'Karel', 'Ctvrty', 'Bouchac', 'a@b.cz', 'AB12345678', 1);
+	(1, 'Karel', 'Prazsky', 'Bouchac', 'a@b.cz', 'AB000001', 1),
+	(2, 'Karina', 'Brnenska', 'Bouchac', 'a@b.cz', 'AB000002', 1),
+	(3, 'Radmila', 'Ostravska', 'Bouchac', 'a@b.cz', 'AB000003', 1),
+	(4, 'Diana', 'Plzenska', 'Bouchac', 'a@b.cz', 'AB000004', 1),
+	(5, 'Dalimil', 'Ustecky', 'Bouchac', 'a@b.cz', 'AB000005', 1),
+	(6, 'Kaspar', 'Mikulovsky', 'Bouchac', 'a@b.cz', 'AB000006', 1),
+	(7, 'Vilma', 'Horazdovicka', 'Bouchac', 'a@b.cz', 'AB000007', 1),
+	(8, 'Cestmir', 'Susicky', 'Bouchac', 'a@b.cz', 'AB000008', 1),
+	(9, 'Vladan', 'Strakonicky', 'Bouchac', 'a@b.cz', 'AB000009', 1),
+	(10, 'Bretislav', 'Kadansky', 'Bouchac', 'a@b.cz', 'AB000010', 1),
+	(11, 'Hynek', 'Lounsky', 'Bouchac', 'a@b.cz', 'AB0000011', 2),
+	(12, 'Nela', 'Slanska', 'Bouchac', 'a@b.cz', 'AB000012', 2),
+	(13, 'Blazej', 'Pardubicky', 'Bouchac', 'a@b.cz', 'AB000013', 2),
+	(14, 'Jarmila', 'Hradecka', 'Bouchac', 'a@b.cz', 'AB000014', 2),
+	(15, 'Dobromila', 'Frydecka', 'Bouchac', 'a@b.cz', 'AB000015', 2),
+	(16, 'Vanda', 'Mistecka', 'Bouchac', 'a@b.cz', 'AB000016', 2),
+	(17, 'Veronika', 'Olomoucka', 'Bouchac', 'a@b.cz', 'AB000017', 2),
+	(18, 'Milada', 'CHrudimska', 'Bouchac', 'a@b.cz', 'AB000020', 2),
+	(21, 'Bedrich', 'Verounsky', 'Bouchac', 'a@b.cz', 'AB000021', 3),
+	(22, 'Anezka', 'Kladenska', 'Bouchac', 'a@b.cz', 'AB000022', 3),
+	(23, 'Kamil', 'Maloborsky', 'Bouchac', 'a@b.cz', 'AB000023', 3),
+	(24, 'Stela', 'Brezanska', 'Bouchac', 'a@b.cz', 'AB000024', 3),
+	(25, 'Kazimir', 'Vestecky', 'Bouchac', 'a@b.cz', 'AB000025', 3),
+	(26, 'Mirek', 'Podebradsky', 'Bouchac', 'a@b.cz', 'AB000026', 3),
+	(27, 'Tomas', 'Nymbursky', 'Bouchac', 'a@b.cz', 'AB000027', 3),
+	(28, 'Gabriela', 'Brodska', 'Bouchac', 'a@b.cz', 'AB000028', 3),
+	(29, 'Frantiska', 'Klatovska', 'Bouchac', 'a@b.cz', 'AB000029', 3),
+	(30, 'Viktorie', 'Kacerovkska', 'Bouchac', 'a@b.cz', 'AB0000030', 3),
+	(31, 'Andela', 'Rudska', 'Bouchac', 'a@b.cz', 'AB000031', 3),
+	(32, 'Rehor', 'Revnicky', 'Bouchac', 'a@b.cz', 'AB000032', 3);
 
 INSERT INTO attempts (ID, COMPETITOR_ID, SITUATION_ID, TIME, JUDGE_ID) VALUES
 	(1, 1, 1, 12.34, 2);

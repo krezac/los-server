@@ -15,36 +15,51 @@ DELETE FROM targets;
 DELETE FROM target_types;
 DELETE FROM situations;
 DELETE FROM competitions;
-DELETE FROM competition_categories;
+DELETE FROM divisions;
 DELETE FROM competition_types;
+DELETE FROM competition_categories;
+DELETE FROM cups;
 DELETE FROM ranges;
 
 -- create
 
 -- source of data: http://zbranekvalitne.cz/strelecka-mapa/data.json (see real data generator in scripts/data)
-INSERT INTO ranges (ID, NAME, LATITUDE, LONGITUDE, URL) VALUES
-	(1, 'SSK Čelákovice TEST', 50.148425000000, 14.735038888900, 'https://zbranekvalitne.cz/strelnice/ssk-celakovice'),
-	(2, 'SSK Žalany TEST', 50.596953611100, 13.893513333300, 'https://zbranekvalitne.cz/strelnice/zalany'),
-	(3, 'AVIM Praha TEST', 50.091916666700, 14.441044444400, 'https://zbranekvalitne.cz/strelnice/avim-praha');
-
 INSERT INTO ranges (ID, NAME, LATITUDE, LONGITUDE, URL, ACTIVE) VALUES
+	(1, 'SSK Čelákovice TEST', 50.148425000000, 14.735038888900, 'https://zbranekvalitne.cz/strelnice/ssk-celakovice', 1),
+	(2, 'SSK Žalany TEST', 50.596953611100, 13.893513333300, 'https://zbranekvalitne.cz/strelnice/zalany', 1),
+	(3, 'AVIM Praha TEST', 50.091916666700, 14.441044444400, 'https://zbranekvalitne.cz/strelnice/avim-praha', 1),
 	(4, 'Not Active TEST', 50.091916666700, 14.441044444400, 'https://zbranekvalitne.cz/strelnice/avim-praha', 0);
 
+INSERT INTO cups(ID, NAME, START_DATE, END_DATE, ACTIVE) VALUES
+	(1, "Rocnik 2018", '2017-10-01', '2018-09-30', 0),
+	(2, "Rocnik 2019", '2018-10-01', '2019-09-30', 1);
 
 INSERT INTO competition_categories (ID, CODE, NAME) VALUES
-	(1, 'P', 'Pohárová'),
-	(2, 'K', 'Klubová'),
+	(1, 'P', 'Pohárový'),
+	(2, 'K', 'Klubový'),
 	(3, 'L', 'Losík'),
 	(4, 'M', 'Mistrovství ČR');
 
 INSERT INTO competition_types (ID, CODE, NAME) VALUES
 	(1, 'KZ', 'Krátká zbraň'),
-	(2, 'Pu', 'Puška'),
+	(2, 'Pu', 'Větší kulová zbraň'),
 	(3, 'Br', 'Brokovnice');
 
-INSERT INTO competitions (ID, NAME, EVENT_DATE, RANGE_ID, CATEGORY_ID, TYPE_ID) VALUES
-	(1, '10 ran a dost 29', '2018-10-29', 1, 1, 1),
-	(2, 'Velka rana', '2018-10-28', 1, 2, 2);
+INSERT INTO divisions (ID, CODE, NAME, TYPE_ID) VALUES
+	(1, 'Pi', 'Pistole', 1),
+	(2, 'MPi', 'Malá pistole', 1),
+	(3, 'Re', 'Revolver', 1),
+	(4, 'MRe', 'Maly revolver', 1),
+	(5, 'PS', 'Puška samonabijeci', 2),
+	(6, 'PO', 'Puška opakovaci', 2),
+	(7, 'PDW', 'Osobni obranna zbran', 2),
+	(8, 'BS', 'Brokovnice samonabijeci', 3),
+	(9, 'BO', 'Brokovnice opakovaci', 3),
+	(10, 'BOs', 'Brokovnice ostatni', 3);
+
+INSERT INTO competitions (ID, NAME, EVENT_DATE, RANGE_ID, CATEGORY_ID, TYPE_ID, CUP_ID) VALUES
+	(1, '10 ran a dost 29', '2018-10-29', 1, 1, 1, 2),
+	(2, 'Velka rana', '2018-10-28', 1, 2, 2, 2);
 
 INSERT INTO situations (ID, NUMBER, NAME, COMPETITION_ID) VALUES
 	(1, 1, 'Utek ze zajeti', 1),
